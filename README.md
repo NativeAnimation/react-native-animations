@@ -17,7 +17,8 @@ animations: onboarding screens, carousels, paywalls, loaders, liquid glass tab b
 Each folder is self-contained. Two ways to add one:
 
 ```sh
-# With the CLI (copies the source into src/components/<id>/)
+# With the CLI (free account; copies the source into src/components/<id>/)
+npx nativeanimation login
 npx nativeanimation add shimmer-skeleton
 
 # Or by hand: copy animations/<id>/ into your project and install its dependencies
