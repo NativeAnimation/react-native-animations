@@ -1,0 +1,17 @@
+{
+  "id": "shimmer-skeleton",
+  "title": "Shimmer Skeleton",
+  "component": "ShimmerSkeleton",
+  "files": ["ShimmerSkeleton.tsx", "index.ts"],
+  "dependencies": {
+    "expo-linear-gradient": "~57.0.2",
+    "react-native-reanimated": "4.5.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "expoSdk": 57,
+  "tags": ["skeleton", "loading", "micro", "placeholder"]
+}

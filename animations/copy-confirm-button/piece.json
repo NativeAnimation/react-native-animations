@@ -1,0 +1,17 @@
+{
+  "id": "copy-confirm-button",
+  "title": "Copy Confirm Button",
+  "component": "CopyConfirmButton",
+  "files": ["CopyConfirmButton.tsx", "index.ts"],
+  "dependencies": {
+    "expo-linear-gradient": "~57.0.2",
+    "react-native-reanimated": "4.5.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "expoSdk": 57,
+  "tags": ["button", "clipboard", "micro", "feedback"]
+}
