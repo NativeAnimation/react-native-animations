@@ -27,6 +27,20 @@ npx expo install react-native-reanimated expo-linear-gradient
 
 Dependencies for each piece are listed in its `piece.json` and README.
 
+### Or ask your AI coding agent
+
+The CLI ships an [MCP](https://modelcontextprotocol.io) server, so Claude Code, Codex, Cursor or VS Code can search the
+catalog, read each animation's props and add it to your project for you:
+
+```sh
+npx nativeanimation login
+claude mcp add nativeanimation -- npx -y nativeanimation@latest mcp   # Claude Code
+codex mcp add nativeanimation -- npx -y nativeanimation@latest mcp    # Codex
+```
+
+Then ask: *"Add the color variant carousel to the product screen."* Setup for other clients:
+[CLI docs](https://www.npmjs.com/package/nativeanimation#use-with-ai-coding-agents-mcp).
+
 ## Compatibility
 
 Tested with **Expo SDK 57**, React Native 0.86, Reanimated 4.5 and react-native-worklets 0.10. Every animation runs on
