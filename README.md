@@ -10,7 +10,6 @@ animations: onboarding screens, carousels, paywalls, loaders, liquid glass tab b
 |---|---|---|
 | [Shimmer Skeleton](animations/shimmer-skeleton) | [▶ Live preview](https://nativeanimation.com/animations/shimmer-skeleton) | A React Native **skeleton loader** with a synchronized diagonal shimmer for loading placeholders. |
 | [Copy Confirm Button](animations/copy-confirm-button) | [▶ Live preview](https://nativeanimation.com/animations/copy-confirm-button) | An **animated button** that morphs a copy icon into a check with a success halo and a confirmation bubble. |
-| [Color Variant Carousel](animations/variant-carousel) | [▶ Live preview](https://nativeanimation.com/animations/variant-carousel) | A gesture-driven **product carousel** whose background color follows the drag between variants. |
 
 ## Install
 
@@ -38,7 +37,7 @@ claude mcp add nativeanimation -- npx -y nativeanimation@latest mcp   # Claude C
 codex mcp add nativeanimation -- npx -y nativeanimation@latest mcp    # Codex
 ```
 
-Then ask: *"Add the color variant carousel to the product screen."* Setup for other clients:
+Then ask: *"Add the shimmer skeleton to the feed while it loads."* Setup for other clients:
 [CLI docs](https://www.npmjs.com/package/nativeanimation#use-with-ai-coding-agents-mcp).
 
 ## Compatibility
@@ -49,7 +48,7 @@ the UI thread from a single shared value, so gestures stay interruptible and the
 ## More animations
 
 The full catalog lives at [nativeanimation.com/animations](https://nativeanimation.com/animations): OTP code input,
-swipe card deck, wheel picker, liquid glass tab bar, countdown paywall, animated bar chart, 3D carousels and more.
+wheel picker, confetti, swipe to delete, liquid glass tab bar, animated bar chart, loaders, 3D carousels and more.
 One piece costs $9, or get [every current and future animation](https://nativeanimation.com/pricing) with a
 one-time payment.
 
