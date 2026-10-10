@@ -1,34 +1,42 @@
 # Copy Confirm Button
 
-A dimensional copy action that rotates into a check, flashes a success halo, and raises a polished confirmation bubble.
+A tactile copy action that turns into a drawn check, emits a brief accent glow, and lifts a glass confirmation pill above the control.
 
 ## How it works
 
-1. The button calls the supplied `onCopy` callback and never imports a clipboard API.
-2. One shared transition crossfades the two View-built icons while rotating and briefly compressing them.
-3. Success triggers a short halo and specular sweep while a second shared value raises and fades the confirmation bubble.
-4. A close-tone gradient, light edge, and layered shadow create the surface depth in either color scheme.
-5. Uncontrolled feedback resets with a cleaned-up timer; controlled consumers decide when to reset.
+1. A single shared progress value crossfades the two outlined copy rectangles into a check whose Skia path draws from start to finish.
+2. The same progress tints the button with the success accent, keeping the icon, surface, and confirmation state perfectly synchronized.
+3. A 1.4-second feedback timeline keeps the concise glass `Copied` pill 10 points clear of the button, then drifts it upward as it fades.
+4. Press-in scales immediately to `0.94`; release returns to `1` with a damped spring for a visual haptic response.
+5. The component calls `onCopy` instead of owning a clipboard dependency, so consumers can use `expo-clipboard`, a native bridge, or a simulated demo.
+
+## Why this one
+
+Most copy buttons stop at an icon swap or a detached toast. This version keeps every response at the point of action: the two rectangles resolve into a genuinely drawn check, the material itself takes on the accent, and a compact glass label appears above the button without covering nearby content. The result confirms the action without shifting layout or making the user hunt for feedback.
 
 ## Install
 
 ```bash
-npx expo install expo-linear-gradient react-native-reanimated
+npx expo install @shopify/react-native-skia expo-blur expo-linear-gradient react-native-reanimated
 ```
 
 ## Usage
 
 ```tsx
-<CopyConfirmButton onCopy={() => copyText(value)} />
+import * as Clipboard from 'expo-clipboard';
+import { CopyConfirmButton } from './CopyConfirmButton';
+
+<CopyConfirmButton onCopy={() => Clipboard.setStringAsync(value)} />;
 
 <CopyConfirmButton
-  size={48}
-  backgroundColor="#23232A"
+  size={56}
+  backgroundColor="#292735"
   colorScheme="dark"
-  iconColor="#F1F1F4"
-  successColor="#53D894"
-  resetMs={2000}
-  onCopy={copyText}
+  iconColor="#F4F4F8"
+  successColor="#765EFF"
+  copiedLabel="Copied"
+  resetMs={1400}
+  onCopy={() => Clipboard.setStringAsync(value)}
 />
 ```
 
@@ -36,27 +44,29 @@ npx expo install expo-linear-gradient react-native-reanimated
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `copied` | `boolean` | — | Controlled feedback state. |
-| `defaultCopied` | `boolean` | `false` | Initial uncontrolled state. |
-| `onCopy` | `() => void` | Required | Performs the product's copy operation. |
-| `onChange` | `(copied: boolean) => void` | — | Receives feedback state changes. |
-| `resetMs` | `number` | `1600` | Feedback duration. |
-| `size` | `number` | `40` | Square button size. |
-| `backgroundColor` | `string` | Scheme-aware | Button color. |
-| `surfaceEndColor` | `string` | Scheme-aware | Bottom material color. |
-| `iconColor` | `string` | `'#3D3D46'` | Copy icon and bubble color. |
-| `successColor` | `string` | `'#169B62'` | Check color. |
-| `copiedLabel` | `string` | `'Copied'` | Bubble text. |
-| `fontFamily` | `string` | System font | Bubble font. |
-| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Surface color treatment. |
-| `accessibilityLabel` | `string` | `'Copy'` | Screen-reader label. |
-| `style` | `StyleProp<ViewStyle>` | — | Button style. |
+| `copied` | `boolean` | — | Controls the confirmation state externally. |
+| `defaultCopied` | `boolean` | `false` | Sets the initial uncontrolled state. |
+| `onCopy` | `() => void` | Required | Performs the application's copy operation. |
+| `onChange` | `(copied: boolean) => void` | — | Receives requested confirmation-state changes. |
+| `resetMs` | `number` | `1400` | Time before uncontrolled feedback resets. |
+| `size` | `number` | `52` | Square button size in points. |
+| `backgroundColor` | `string` | Scheme-aware | Resting button color. |
+| `surfaceEndColor` | `string` | Same as `backgroundColor` | Alternate resting surface color retained for API compatibility. |
+| `iconColor` | `string` | Scheme-aware | Resting copy icon color. |
+| `successColor` | `string` | `'#6E56FF'` | Success surface, dot, and glow color. |
+| `copiedLabel` | `string` | `'Copied'` | Confirmation-pill text. |
+| `fontFamily` | `string` | System font | Confirmation-pill font family. |
+| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Surface and glass treatment. |
+| `accessibilityLabel` | `string` | `'Copy value'` | Screen-reader action label. |
+| `style` | `StyleProp<ViewStyle>` | — | Button-container style. |
 | `testID` | `string` | — | Test identifier. |
+
+The forwarded ref exposes `copy()` and `reset()` for guided demos and external controls.
 
 ## Compatibility
 
-Expo SDK 57, React Native 0.86, and Reanimated 4.5. iOS and Android are supported but device-unverified; web is verified by the project gate. Works in Expo Go.
+Built for Expo SDK 57, React Native 0.86, Reanimated 4.5, and React Native Skia 2.6. iOS and Android are supported but device-unverified; web is verified by the project gate. The included dependencies work in Expo Go for SDK 57.
 
 ## Accessibility
 
-The component exposes a labeled button and selected feedback state. Reduced Motion crossfades the icons and shows the bubble in place without rotation or travel.
+The control exposes a labeled button and a selected confirmation state. The label updates to announce success. With Reduce Motion enabled, the icon and surface crossfade without travel, the glow and text shimmer are removed, and the confirmation pill remains stationary with a 10-point gap above the button.

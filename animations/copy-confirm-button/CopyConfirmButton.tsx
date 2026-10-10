@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useState,
 } from 'react';
 import {
@@ -11,14 +12,25 @@ import {
   Text,
   useColorScheme,
   View,
+  type LayoutChangeEvent,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import {
+  Canvas,
+  Group,
+  Path,
+  RoundedRect,
+  Skia,
+} from '@shopify/react-native-skia';
 import Animated, {
   Easing,
   interpolate,
+  interpolateColor,
   useAnimatedStyle,
+  useDerivedValue,
   useReducedMotion,
   useSharedValue,
   withSpring,
@@ -26,6 +38,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const SUCCESS_DURATION = 1400;
+const PRESS_SPRING = { damping: 20, stiffness: 360, mass: 0.7 };
 
 /** Imperative controls for the copy button. */
 export type CopyConfirmButtonRef = {
@@ -40,37 +54,37 @@ export type CopyConfirmButtonProps = {
   copied?: boolean;
   /** Initial feedback state when uncontrolled. @default false */
   defaultCopied?: boolean;
-  /** Called instead of using a clipboard API. */
+  /** Performs the product's copy operation. */
   onCopy: () => void;
   /** Called when the requested feedback state changes. */
   onChange?: (copied: boolean) => void;
-  /** Time before uncontrolled feedback resets. @default 1600 */
+  /** Time before uncontrolled feedback resets. @default 1400 */
   resetMs?: number;
-  /** Button size. @default 40 */
+  /** Button size. @default 52 */
   size?: number;
-  /** Button background color. Defaults to a scheme-aware neutral. */
+  /** Resting button color. Defaults to a scheme-aware neutral. */
   backgroundColor?: string;
-  /** Bottom surface color. Defaults to a nearby scheme-aware tone. */
+  /** Bottom surface color kept for API compatibility. */
   surfaceEndColor?: string;
-  /** Copy icon color. @default '#3D3D46' */
+  /** Resting copy icon color. Defaults to a scheme-aware neutral. */
   iconColor?: string;
-  /** Check color. @default '#169B62' */
+  /** Success surface and glow color. @default '#6E56FF' */
   successColor?: string;
-  /** Bubble text. @default 'Copied' */
+  /** Confirmation label. @default 'Copied' */
   copiedLabel?: string;
-  /** Font family for the bubble. */
+  /** Font family for the confirmation label. */
   fontFamily?: string;
   /** Color treatment, or the device setting when set to auto. @default 'auto' */
   colorScheme?: 'light' | 'dark' | 'auto';
-  /** Screen-reader label. @default 'Copy' */
+  /** Screen-reader label. @default 'Copy value' */
   accessibilityLabel?: string;
-  /** Style for the button. */
+  /** Style for the button container. */
   style?: StyleProp<ViewStyle>;
   /** Test identifier for the button. */
   testID?: string;
 };
 
-/** A compact copy button with rotating icon feedback and a rising confirmation bubble. */
+/** A tactile copy action that morphs into a drawn check and emits glass feedback. */
 export const CopyConfirmButton = forwardRef<
   CopyConfirmButtonRef,
   CopyConfirmButtonProps
@@ -80,16 +94,16 @@ export const CopyConfirmButton = forwardRef<
     defaultCopied = false,
     onCopy,
     onChange,
-    resetMs = 1600,
-    size = 40,
+    resetMs = SUCCESS_DURATION,
+    size = 52,
     backgroundColor,
     surfaceEndColor,
-    iconColor = '#3D3D46',
-    successColor = '#169B62',
+    iconColor,
+    successColor = '#6E56FF',
     copiedLabel = 'Copied',
     fontFamily,
     colorScheme = 'auto',
-    accessibilityLabel = 'Copy',
+    accessibilityLabel = 'Copy value',
     style,
     testID,
   },
@@ -100,15 +114,44 @@ export const CopyConfirmButton = forwardRef<
   const dark =
     colorScheme === 'dark' ||
     (colorScheme === 'auto' && systemScheme === 'dark');
-  const resolvedBackground = backgroundColor ?? (dark ? '#25242C' : '#FFFFFF');
-  const resolvedSurfaceEnd = surfaceEndColor ?? (dark ? '#18171D' : '#F2F0F5');
+  const resolvedBackground = backgroundColor ?? (dark ? '#23232E' : '#FFFFFF');
+  const resolvedSurfaceEnd = surfaceEndColor ?? resolvedBackground;
+  const resolvedIcon = iconColor ?? (dark ? '#F4F4F8' : '#34343D');
   const controlled = copied !== undefined;
   const [internalCopied, setInternalCopied] = useState(defaultCopied);
+  const [measuredSize, setMeasuredSize] = useState(size);
   const currentCopied = controlled ? copied : internalCopied;
-  const transition = useSharedValue(currentCopied ? 1 : 0);
-  const bubble = useSharedValue(currentCopied ? 0.15 : 1);
+  const progress = useSharedValue(currentCopied ? 1 : 0);
+  const feedback = useSharedValue(currentCopied ? 1 : 0);
   const pressScale = useSharedValue(1);
-  const celebration = useSharedValue(currentCopied ? 1 : 0);
+
+  const copyPath = useMemo(() => {
+    const path = Skia.Path.Make();
+    const unit = measuredSize / 52;
+    path.addRRect(
+      Skia.RRectXY(
+        Skia.XYWHRect(15 * unit, 13 * unit, 18 * unit, 20 * unit),
+        4 * unit,
+        4 * unit,
+      ),
+    );
+    path.addRRect(
+      Skia.RRectXY(
+        Skia.XYWHRect(20 * unit, 19 * unit, 18 * unit, 20 * unit),
+        4 * unit,
+        4 * unit,
+      ),
+    );
+    return path;
+  }, [measuredSize]);
+  const checkPath = useMemo(() => {
+    const path = Skia.Path.Make();
+    const unit = measuredSize / 52;
+    path.moveTo(15 * unit, 27 * unit);
+    path.lineTo(23 * unit, 35 * unit);
+    path.lineTo(38 * unit, 18 * unit);
+    return path;
+  }, [measuredSize]);
 
   const requestCopied = useCallback(
     (next: boolean) => {
@@ -117,13 +160,22 @@ export const CopyConfirmButton = forwardRef<
     },
     [controlled, onChange],
   );
-
   const reset = useCallback(() => requestCopied(false), [requestCopied]);
   const triggerCopy = useCallback(() => {
-    if (currentCopied) return;
     onCopy();
     requestCopied(true);
-  }, [currentCopied, onCopy, requestCopied]);
+  }, [onCopy, requestCopied]);
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const next = Math.min(
+        event.nativeEvent.layout.width,
+        event.nativeEvent.layout.height,
+      );
+      if (next > 0 && Math.abs(next - measuredSize) > 0.5)
+        setMeasuredSize(next);
+    },
+    [measuredSize],
+  );
 
   useImperativeHandle(ref, () => ({ copy: triggerCopy, reset }), [
     reset,
@@ -131,40 +183,30 @@ export const CopyConfirmButton = forwardRef<
   ]);
 
   useEffect(() => {
-    transition.set(
+    progress.set(
       reducedMotion
         ? currentCopied
           ? 1
           : 0
         : withTiming(currentCopied ? 1 : 0, {
-            duration: 260,
-            easing: Easing.out(Easing.cubic),
+            duration: currentCopied ? 360 : 180,
+            easing: Easing.bezier(0.23, 1, 0.32, 1),
           }),
     );
     if (currentCopied) {
-      bubble.set(0);
-      bubble.set(
-        withTiming(1, {
-          duration: reducedMotion
-            ? Math.max(1, resetMs)
-            : Math.max(500, resetMs),
-          easing: Easing.linear,
-        }),
-      );
-      celebration.set(0);
-      celebration.set(
+      feedback.set(0);
+      feedback.set(
         reducedMotion
           ? 1
           : withTiming(1, {
-              duration: 520,
-              easing: Easing.out(Easing.cubic),
+              duration: Math.max(1, resetMs),
+              easing: Easing.linear,
             }),
       );
     } else {
-      bubble.set(1);
-      celebration.set(0);
+      feedback.set(1);
     }
-  }, [bubble, celebration, currentCopied, reducedMotion, resetMs, transition]);
+  }, [currentCopied, feedback, progress, reducedMotion, resetMs]);
 
   useEffect(() => {
     if (controlled || !currentCopied) return;
@@ -172,103 +214,68 @@ export const CopyConfirmButton = forwardRef<
     return () => clearTimeout(timer);
   }, [controlled, currentCopied, requestCopied, resetMs]);
 
-  const iconContainerStyle = useAnimatedStyle(() => ({
-    transform: [
-      { rotate: reducedMotion ? '0deg' : `${transition.value * 90}deg` },
-      { scale: interpolate(transition.value, [0, 0.5, 1], [1, 0.82, 1]) },
-    ],
-  }));
-  const copyStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(transition.value, [0, 0.42, 1], [1, 0, 0]),
-  }));
-  const checkStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(transition.value, [0, 0.58, 1], [0, 0, 1]),
-    transform: [
-      { rotate: reducedMotion ? '0deg' : `${-90 + transition.value * 90}deg` },
-    ],
-  }));
-  const bubbleStyle = useAnimatedStyle(() => ({
-    opacity: reducedMotion
-      ? currentCopied
-        ? 1
-        : 0
-      : interpolate(bubble.value, [0, 0.14, 0.72, 1], [0, 1, 1, 0]),
-    transform: [
-      {
-        translateY: reducedMotion
-          ? -size * 0.9
-          : interpolate(bubble.value, [0, 1], [-size * 0.65, -size * 1.15]),
-      },
-      {
-        scale: reducedMotion
-          ? 1
-          : interpolate(bubble.value, [0, 0.15], [0.9, 1]),
-      },
-    ],
+  const copyOpacity = useDerivedValue(() =>
+    interpolate(progress.value, [0, 0.46, 1], [1, 0, 0]),
+  );
+  const checkOpacity = useDerivedValue(() =>
+    interpolate(progress.value, [0, 0.44, 0.62, 1], [0, 0, 1, 1]),
+  );
+  const checkEnd = useDerivedValue(() =>
+    interpolate(progress.value, [0.46, 1], [0, 1]),
+  );
+  const surfaceStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      progress.value,
+      [0, 1],
+      [resolvedSurfaceEnd, successColor],
+    ),
+    borderColor: interpolateColor(
+      progress.value,
+      [0, 1],
+      [
+        dark ? 'rgba(255,255,255,0.16)' : 'rgba(20,20,35,0.10)',
+        'rgba(255,255,255,0.36)',
+      ],
+    ),
   }));
   const pressStyle = useAnimatedStyle(() => ({
     transform: [{ scale: reducedMotion ? 1 : pressScale.value }],
   }));
   const glowStyle = useAnimatedStyle(() => ({
     opacity: reducedMotion
-      ? currentCopied
-        ? 0.24
-        : 0
-      : interpolate(celebration.value, [0, 0.18, 1], [0, 0.34, 0]),
+      ? 0
+      : interpolate(feedback.value, [0, 0.08, 0.42, 1], [0, 0.9, 0.32, 0]),
     transform: [
-      { scale: interpolate(celebration.value, [0, 1], [0.55, 1.48]) },
+      { scale: interpolate(feedback.value, [0, 0.24, 1], [0.72, 1.06, 1.18]) },
     ],
   }));
-  const sheenStyle = useAnimatedStyle(() => ({
+  const labelStyle = useAnimatedStyle(() => ({
     opacity: reducedMotion
-      ? 0
-      : interpolate(celebration.value, [0, 0.12, 0.88, 1], [0, 0.76, 0.42, 0]),
+      ? currentCopied
+        ? 1
+        : 0
+      : interpolate(feedback.value, [0, 0.09, 0.72, 1], [0, 1, 1, 0]),
     transform: [
       {
-        translateX: interpolate(
-          celebration.value,
-          [0, 1],
-          [-size * 0.9, size * 0.9],
-        ),
+        translateY: reducedMotion
+          ? 0
+          : interpolate(feedback.value, [0, 0.16, 0.68, 1], [2, 0, -5, -14]),
       },
-      { rotate: '-18deg' },
+      {
+        scale: reducedMotion
+          ? 1
+          : interpolate(feedback.value, [0, 0.16, 1], [0.94, 1, 1]),
+      },
     ],
   }));
 
-  const iconSize = size * 0.46;
-
   return (
-    <AnimatedPressable
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="button"
-      accessibilityState={{ selected: currentCopied }}
-      onPressIn={() => {
-        pressScale.set(
-          reducedMotion ? 1 : withSpring(0.96, { damping: 15, stiffness: 240 }),
-        );
-      }}
-      onPressOut={() => {
-        pressScale.set(
-          reducedMotion ? 1 : withSpring(1, { damping: 13, stiffness: 220 }),
-        );
-      }}
-      onPress={triggerCopy}
+    <View
+      onLayout={handleLayout}
       style={[
-        styles.button,
-        {
-          backgroundColor: resolvedBackground,
-          borderColor: dark
-            ? 'rgba(255,255,255,0.13)'
-            : 'rgba(255,255,255,0.72)',
-          borderRadius: size * 0.28,
-          boxShadow: dark
-            ? '0px 1px 2px rgba(0,0,0,0.35), 0px 12px 32px rgba(0,0,0,0.28)'
-            : '0px 1px 2px rgba(0,0,0,0.08), 0px 12px 32px rgba(20,20,40,0.14)',
-          height: size,
-          width: size,
-        },
+        styles.root,
+        { height: size, maxHeight: size, maxWidth: size, width: size },
         style,
-        pressStyle,
       ]}
       testID={testID}
     >
@@ -277,169 +284,152 @@ export const CopyConfirmButton = forwardRef<
         style={[
           styles.glow,
           {
-            backgroundColor: successColor,
-            borderRadius: size,
-            height: size * 1.35,
-            left: -size * 0.175,
-            top: -size * 0.175,
-            width: size * 1.35,
+            borderRadius: measuredSize * 0.32,
+            boxShadow: `0px 0px ${Math.round(measuredSize * 0.58)}px ${successColor}`,
           },
           glowStyle,
         ]}
       />
-      <View
-        pointerEvents="none"
-        style={[styles.surface, { borderRadius: size * 0.28 }]}
-      >
-        <LinearGradient
-          colors={[resolvedBackground, resolvedSurfaceEnd]}
-          end={{ x: 0.5, y: 1 }}
-          start={{ x: 0.5, y: 0 }}
-          style={[StyleSheet.absoluteFill, { borderRadius: 8 }]}
-        />
-        <Animated.View
-          style={[
-            styles.sheen,
-            { height: size * 1.5, width: Math.max(12, size * 0.24) },
-            sheenStyle,
-          ]}
-        >
-          <LinearGradient
-            colors={[
-              'rgba(255,255,255,0)',
-              'rgba(255,255,255,0.82)',
-              'rgba(255,255,255,0)',
-            ]}
-            end={{ x: 1, y: 0 }}
-            start={{ x: 0, y: 0 }}
-            style={StyleSheet.absoluteFill}
-          />
-        </Animated.View>
-      </View>
-      <Animated.View
-        pointerEvents="none"
+      <AnimatedPressable
+        accessibilityLabel={
+          currentCopied
+            ? `${copiedLabel}. ${accessibilityLabel}`
+            : accessibilityLabel
+        }
+        accessibilityRole="button"
+        accessibilityState={{ selected: currentCopied }}
+        onPress={triggerCopy}
+        onPressIn={() => {
+          pressScale.set(reducedMotion ? 1 : withSpring(0.94, PRESS_SPRING));
+        }}
+        onPressOut={() => {
+          pressScale.set(reducedMotion ? 1 : withSpring(1, PRESS_SPRING));
+        }}
         style={[
-          styles.iconContainer,
-          { height: iconSize, width: iconSize },
-          iconContainerStyle,
-        ]}
-      >
-        <Animated.View style={[styles.copyIcon, copyStyle]}>
-          <View
-            style={[
-              styles.copyBack,
-              {
-                borderColor: iconColor,
-                borderRadius: size * 0.055,
-                height: iconSize * 0.68,
-                width: iconSize * 0.62,
-              },
-            ]}
-          />
-          <View
-            style={[
-              styles.copyFront,
-              {
-                borderColor: iconColor,
-                borderRadius: size * 0.055,
-                height: iconSize * 0.68,
-                width: iconSize * 0.62,
-              },
-            ]}
-          />
-        </Animated.View>
-        <Animated.View style={[styles.checkIcon, checkStyle]}>
-          <View
-            style={[
-              styles.checkFirst,
-              { backgroundColor: successColor, width: iconSize * 0.42 },
-            ]}
-          />
-          <View
-            style={[
-              styles.checkSecond,
-              { backgroundColor: successColor, width: iconSize * 0.75 },
-            ]}
-          />
-        </Animated.View>
-      </Animated.View>
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          styles.bubble,
+          styles.button,
           {
-            backgroundColor: iconColor,
-            borderColor: dark
-              ? 'rgba(255,255,255,0.14)'
-              : 'rgba(255,255,255,0.32)',
+            borderRadius: measuredSize * 0.29,
+            boxShadow: dark
+              ? '0px 1px 2px rgba(0,0,0,0.42), 0px 12px 30px rgba(0,0,0,0.34)'
+              : '0px 1px 2px rgba(16,16,32,0.10), 0px 12px 30px rgba(16,16,32,0.16)',
           },
-          bubbleStyle,
+          surfaceStyle,
+          pressStyle,
         ]}
       >
         <LinearGradient
-          colors={['rgba(255,255,255,0.16)', 'rgba(255,255,255,0)']}
+          colors={[
+            'rgba(255,255,255,0.26)',
+            'rgba(255,255,255,0.06)',
+            'rgba(255,255,255,0)',
+          ]}
+          end={{ x: 0.5, y: 1 }}
           pointerEvents="none"
+          start={{ x: 0.5, y: 0 }}
           style={StyleSheet.absoluteFill}
         />
-        <Text style={[styles.bubbleText, { fontFamily }]}>{copiedLabel}</Text>
-        <View style={[styles.caret, { borderTopColor: iconColor }]} />
+        <Canvas pointerEvents="none" style={styles.canvas}>
+          <Group opacity={copyOpacity}>
+            <Path
+              color={resolvedIcon}
+              path={copyPath}
+              strokeCap="round"
+              strokeJoin="round"
+              strokeWidth={Math.max(1.5, measuredSize * 0.035)}
+              style="stroke"
+            />
+          </Group>
+          <Group opacity={checkOpacity}>
+            <Path
+              color="#FFFFFF"
+              end={checkEnd}
+              path={checkPath}
+              strokeCap="round"
+              strokeJoin="round"
+              strokeWidth={Math.max(2.2, measuredSize * 0.055)}
+              style="stroke"
+            />
+          </Group>
+          <RoundedRect
+            color="rgba(255,255,255,0.18)"
+            height={1}
+            r={0.5}
+            width={measuredSize * 0.46}
+            x={measuredSize * 0.27}
+            y={1}
+          />
+        </Canvas>
+      </AnimatedPressable>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.labelPosition,
+          { bottom: measuredSize + 10 },
+          labelStyle,
+        ]}
+      >
+        <BlurView
+          blurMethod="dimezisBlurViewSdk31Plus"
+          intensity={62}
+          tint={dark ? 'systemThickMaterialDark' : 'systemThinMaterialLight'}
+          style={styles.labelGlass}
+        >
+          <LinearGradient
+            colors={['rgba(255,255,255,0.26)', 'rgba(255,255,255,0.06)']}
+            pointerEvents="none"
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={[styles.labelDot, { backgroundColor: successColor }]} />
+          <Text
+            style={[
+              styles.labelText,
+              { color: dark ? '#F7F7FA' : '#22222A', fontFamily },
+            ]}
+          >
+            {copiedLabel}
+          </Text>
+        </BlurView>
       </Animated.View>
-    </AnimatedPressable>
+    </View>
   );
 });
 
 export default CopyConfirmButton;
 
 const styles = StyleSheet.create({
-  bubble: {
+  button: {
+    alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 9,
-    paddingVertical: 6,
-    position: 'absolute',
-  },
-  bubbleText: { color: '#FFFFFF', fontSize: 12, lineHeight: 14 },
-  button: { alignItems: 'center', justifyContent: 'center' },
-  caret: {
-    borderLeftColor: 'transparent',
-    borderLeftWidth: 5,
-    borderRightColor: 'transparent',
-    borderRightWidth: 5,
-    borderTopWidth: 5,
-    bottom: -5,
-    left: '50%',
-    marginLeft: -5,
-    position: 'absolute',
-  },
-  checkFirst: {
-    borderRadius: 2,
-    height: 2.5,
-    left: 1,
-    position: 'absolute',
-    top: '55%',
-    transform: [{ rotate: '45deg' }],
-  },
-  checkIcon: { bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 },
-  checkSecond: {
-    borderRadius: 2,
-    height: 2.5,
-    left: '27%',
-    position: 'absolute',
-    top: '45%',
-    transform: [{ rotate: '-48deg' }],
-  },
-  copyBack: { borderWidth: 1.7, left: 0, position: 'absolute', top: 0 },
-  copyFront: { borderWidth: 1.7, bottom: 0, position: 'absolute', right: 0 },
-  copyIcon: { bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 },
-  iconContainer: { position: 'relative' },
-  glow: { position: 'absolute' },
-  sheen: { left: '50%', position: 'absolute', top: '-25%' },
-  surface: {
-    bottom: 0,
-    left: 0,
+    flex: 1,
+    justifyContent: 'center',
     overflow: 'hidden',
-    position: 'absolute',
-    right: 0,
-    top: 0,
   },
+  canvas: { height: '100%', width: '100%' },
+  glow: {
+    backgroundColor: 'transparent',
+    bottom: 4,
+    left: 4,
+    position: 'absolute',
+    right: 4,
+    top: 4,
+  },
+  labelDot: { borderRadius: 3, height: 6, marginRight: 7, width: 6 },
+  labelGlass: {
+    alignItems: 'center',
+    borderColor: 'rgba(255,255,255,0.28)',
+    borderRadius: 999,
+    borderWidth: 1,
+    flexDirection: 'row',
+    overflow: 'hidden',
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+  },
+  labelPosition: {
+    alignSelf: 'center',
+    boxShadow:
+      '0px 1px 2px rgba(16,16,32,0.12), 0px 10px 26px rgba(16,16,32,0.16)',
+    position: 'absolute',
+  },
+  labelText: { fontSize: 12, letterSpacing: 0.12, lineHeight: 15 },
+  root: { flex: 1, position: 'relative' },
 });
