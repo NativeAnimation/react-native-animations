@@ -10,6 +10,8 @@ animations: onboarding screens, carousels, paywalls, loaders, liquid glass tab b
 |---|---|---|
 | [Shimmer Skeleton](animations/shimmer-skeleton) | [▶ Live preview](https://nativeanimation.com/animations/shimmer-skeleton) | A React Native **skeleton loader** with a synchronized diagonal shimmer for loading placeholders. |
 | [Copy Confirm Button](animations/copy-confirm-button) | [▶ Live preview](https://nativeanimation.com/animations/copy-confirm-button) | An **animated button** that morphs a copy icon into a check with a success halo and a confirmation bubble. |
+| [Drawn Checkbox](animations/drawn-checkbox) | [▶ Live preview](https://nativeanimation.com/animations/drawn-checkbox) | An **animated checkbox** with a spring fill, a hand-drawn check mark and a label strike-through, built with Skia. |
+| [Spring Toggle](animations/spring-toggle) | [▶ Live preview](https://nativeanimation.com/animations/spring-toggle) | An **animated toggle switch** you can drag: the thumb stretches, glows and settles with a spring. |
 
 ## Install
 
@@ -42,7 +44,7 @@ Then ask: *"Add the shimmer skeleton to the feed while it loads."* Setup for oth
 
 ## Compatibility
 
-Tested with **Expo SDK 57**, React Native 0.86, Reanimated 4.5 and react-native-worklets 0.10. Every animation runs on
+Built for **Expo SDK 57**, React Native 0.86, Reanimated 4.5 and react-native-worklets 0.10. Every animation runs on
 the UI thread from a single shared value, so gestures stay interruptible and there is no React state per frame.
 
 ## More animations

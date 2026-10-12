@@ -1,0 +1,18 @@
+{
+  "id": "drawn-checkbox",
+  "title": "Drawn Checkbox",
+  "component": "DrawnCheckbox",
+  "files": ["DrawnCheckbox.tsx", "index.ts"],
+  "dependencies": {
+    "@shopify/react-native-skia": "2.6.2",
+    "expo-linear-gradient": "~57.0.2",
+    "react-native-reanimated": "4.5.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "expoSdk": 57,
+  "tags": ["checkbox", "micro", "skia", "form"]
+}
