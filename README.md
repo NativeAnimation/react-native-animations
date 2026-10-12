@@ -8,10 +8,10 @@ animations: onboarding screens, carousels, paywalls, loaders, liquid glass tab b
 
 | Animation | Preview | What it is |
 |---|---|---|
-| [Shimmer Skeleton](animations/shimmer-skeleton) | [▶ Live preview](https://nativeanimation.com/animations/shimmer-skeleton) | A React Native **skeleton loader** with a synchronized diagonal shimmer for loading placeholders. |
-| [Copy Confirm Button](animations/copy-confirm-button) | [▶ Live preview](https://nativeanimation.com/animations/copy-confirm-button) | An **animated button** that morphs a copy icon into a check with a success halo and a confirmation bubble. |
-| [Drawn Checkbox](animations/drawn-checkbox) | [▶ Live preview](https://nativeanimation.com/animations/drawn-checkbox) | An **animated checkbox** with a spring fill, a hand-drawn check mark and a label strike-through, built with Skia. |
-| [Spring Toggle](animations/spring-toggle) | [▶ Live preview](https://nativeanimation.com/animations/spring-toggle) | An **animated toggle switch** you can drag: the thumb stretches, glows and settles with a spring. |
+| [Shimmer Skeleton](animations/shimmer-skeleton) | <a href="https://nativeanimation.com/animations/shimmer-skeleton"><img src="media/shimmer-skeleton.gif" width="120" alt="shimmer skeleton React Native animation preview"></a> | A React Native **skeleton loader** with a synchronized diagonal shimmer for loading placeholders. |
+| [Copy Confirm Button](animations/copy-confirm-button) | <a href="https://nativeanimation.com/animations/copy-confirm-button"><img src="media/copy-confirm-button.gif" width="120" alt="copy confirm button React Native animation preview"></a> | An **animated button** that morphs a copy icon into a check with a success halo and a confirmation bubble. |
+| [Drawn Checkbox](animations/drawn-checkbox) | <a href="https://nativeanimation.com/animations/drawn-checkbox"><img src="media/drawn-checkbox.gif" width="120" alt="drawn checkbox React Native animation preview"></a> | An **animated checkbox** with a spring fill, a hand-drawn check mark and a label strike-through, built with Skia. |
+| [Spring Toggle](animations/spring-toggle) | <a href="https://nativeanimation.com/animations/spring-toggle"><img src="media/spring-toggle.gif" width="120" alt="spring toggle React Native animation preview"></a> | An **animated toggle switch** you can drag: the thumb stretches, glows and settles with a spring. |
 
 ## Install
 
