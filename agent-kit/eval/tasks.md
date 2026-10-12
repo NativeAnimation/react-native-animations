@@ -1,6 +1,6 @@
 # Native Animation integration evaluation
 
-Run each task independently for Claude Code, Cursor, and Codex. Tasks 1–6 can be completed using the six free folders in this repository. Tasks 7–10 test catalog discovery and existing entitlements; without access, a correct explanation and suitable free alternative are recorded by the reviewer, but do not count as delivering the requested premium behavior.
+Run each task independently for Claude Code, Cursor, and Codex. Tasks 1–6 can be completed using the free folders in this repository. Tasks 7–10 test catalog discovery and existing entitlements; without access, a correct explanation and suitable free alternative are recorded by the reviewer, but do not count as delivering the requested premium behavior.
 
 Every task starts with a clean Expo SDK 57 TypeScript app. The agent must inspect the SDK, search the MCP, read candidate details, minimize new dependencies, install them with Expo, integrate actual source, respect reduced motion, and type check. Do not purchase or log in during evaluation.
 

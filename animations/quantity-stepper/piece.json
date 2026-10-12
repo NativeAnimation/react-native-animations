@@ -1,0 +1,17 @@
+{
+  "id": "quantity-stepper",
+  "title": "Quantity Stepper",
+  "component": "QuantityStepper",
+  "files": ["QuantityStepper.tsx", "index.ts"],
+  "dependencies": {
+    "expo-linear-gradient": "~57.0.2",
+    "react-native-reanimated": "4.5.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "expoSdk": 57,
+  "tags": ["stepper", "cart", "micro", "counter"]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "floating-label-input",
+  "title": "Floating Label Input",
+  "component": "FloatingLabelInput",
+  "files": ["FloatingLabelInput.tsx", "index.ts"],
+  "dependencies": {
+    "expo-linear-gradient": "~57.0.2",
+    "react-native-reanimated": "4.5.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "expoSdk": 57,
+  "tags": ["input", "form", "micro", "label"]
+}

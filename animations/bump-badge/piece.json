@@ -1,0 +1,16 @@
+{
+  "id": "bump-badge",
+  "title": "Bump Badge",
+  "component": "BumpBadge",
+  "files": ["BumpBadge.tsx", "index.ts"],
+  "dependencies": {
+    "react-native-reanimated": "4.5.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "expoSdk": 57,
+  "tags": ["badge", "counter", "micro", "notification"]
+}
