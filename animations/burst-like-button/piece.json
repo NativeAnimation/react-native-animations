@@ -1,0 +1,18 @@
+{
+  "id": "burst-like-button",
+  "title": "Burst Like Button",
+  "component": "BurstLikeButton",
+  "files": ["BurstLikeButton.tsx", "index.ts"],
+  "dependencies": {
+    "@shopify/react-native-skia": "2.6.2",
+    "expo-linear-gradient": "~57.0.2",
+    "react-native-reanimated": "4.5.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "expoSdk": 57,
+  "tags": ["button", "like", "micro", "particles", "skia"]
+}

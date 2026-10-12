@@ -12,6 +12,8 @@ animations: onboarding screens, carousels, paywalls, loaders, liquid glass tab b
 | [Copy Confirm Button](animations/copy-confirm-button) | <a href="https://nativeanimation.com/animations/copy-confirm-button"><img src="media/copy-confirm-button.gif" width="120" alt="copy confirm button React Native animation preview"></a> | An **animated button** that morphs a copy icon into a check with a success halo and a confirmation bubble. |
 | [Drawn Checkbox](animations/drawn-checkbox) | <a href="https://nativeanimation.com/animations/drawn-checkbox"><img src="media/drawn-checkbox.gif" width="120" alt="drawn checkbox React Native animation preview"></a> | An **animated checkbox** with a spring fill, a hand-drawn check mark and a label strike-through, built with Skia. |
 | [Spring Toggle](animations/spring-toggle) | <a href="https://nativeanimation.com/animations/spring-toggle"><img src="media/spring-toggle.gif" width="120" alt="spring toggle React Native animation preview"></a> | An **animated toggle switch** you can drag: the thumb stretches, glows and settles with a spring. |
+| [Burst Like Button](animations/burst-like-button) | <a href="https://nativeanimation.com/animations/burst-like-button"><img src="media/burst-like-button.gif" width="120" alt="burst like button React Native animation preview"></a> | An **animated like button** in Skia: a spring burst, physical particles, a rolling count and a hold-to-charge super-like. |
+| [Toast Stack](animations/toast-stack) | <a href="https://nativeanimation.com/animations/toast-stack"><img src="media/toast-stack.gif" width="120" alt="toast stack React Native animation preview"></a> | A React Native **toast notification** stack that fans open with depth and dismisses with physical swipes. |
 
 ## Install
 

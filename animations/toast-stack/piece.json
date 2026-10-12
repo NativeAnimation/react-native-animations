@@ -1,0 +1,20 @@
+{
+  "id": "toast-stack",
+  "title": "Toast Stack",
+  "component": "ToastProvider",
+  "files": ["ToastStack.tsx", "index.ts"],
+  "dependencies": {
+    "expo-blur": "~57.0.3",
+    "expo-linear-gradient": "~57.0.2",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  },
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "expoSdk": 57,
+  "tags": ["toast", "notification", "micro", "gesture"]
+}
