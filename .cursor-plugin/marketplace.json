@@ -1,0 +1,11 @@
+{
+  "name": "nativeanimation",
+  "owner": { "name": "Native Animation" },
+  "plugins": [
+    {
+      "name": "nativeanimation",
+      "source": "plugins/nativeanimation",
+      "description": "Choose and add Native Animation components to Expo apps."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "nativeanimation",
+  "description": "Native Animation skills and MCP for Expo apps.",
+  "owner": { "name": "Native Animation" },
+  "plugins": [
+    {
+      "name": "nativeanimation",
+      "source": "./plugins/nativeanimation",
+      "description": "Choose and add Native Animation components to Expo apps."
+    }
+  ]
+}

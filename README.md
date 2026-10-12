@@ -30,19 +30,40 @@ npx expo install react-native-reanimated expo-linear-gradient
 
 Dependencies for each piece are listed in its `piece.json` and README.
 
-### Or ask your AI coding agent
+## Use with your AI coding agent
 
-The CLI ships an [MCP](https://modelcontextprotocol.io) server, so Claude Code, Codex, Cursor or VS Code can search the
-catalog, read each animation's props and add it to your project for you:
+The Native Animation plugin bundles one shared skill and the MCP server. Your agent can search, compare dependencies,
+read real props, and add an animation to the requested Expo screen.
 
-```sh
-npx nativeanimation login
-claude mcp add nativeanimation -- npx -y nativeanimation@latest mcp   # Claude Code
-codex mcp add nativeanimation -- npx -y nativeanimation@latest mcp    # Codex
+**Claude Code** (2.1.275 or later), inside a session:
+
+```text
+/plugin install nativeanimation --marketplace NativeAnimation/react-native-animations
 ```
 
-Then ask: *"Add the shimmer skeleton to the feed while it loads."* Setup for other clients:
-[CLI docs](https://www.npmjs.com/package/nativeanimation#use-with-ai-coding-agents-mcp).
+You can also register the repository with `/plugin marketplace add NativeAnimation/react-native-animations`, then
+install `nativeanimation@nativeanimation` from the plugin panel.
+
+**Codex**, in your terminal:
+
+```sh
+codex plugin marketplace add NativeAnimation/react-native-animations && codex plugin add nativeanimation@nativeanimation
+```
+
+**Cursor**, from a checkout of this repository:
+
+```sh
+bash agent-kit/install-cursor.sh
+```
+
+Reload Cursor and confirm the local plugin in Customize; local plugin imports must be enabled. Directory listings
+require review. [Package formats and current limitations](agent-kit/FORMATS.md) include the OpenAI submission draft.
+For an MCP-only connection, [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=nativeanimation&config=eyJuYXRpdmVhbmltYXRpb24iOnsiY29tbWFuZCI6Im5weCIsImFyZ3MiOlsiLXkiLCJuYXRpdmVhbmltYXRpb25AbGF0ZXN0IiwibWNwIl19fQ%3D%3D);
+that link does not install the skill.
+
+Ask: *"Add a skeleton loader to the feed while it loads."* Public discovery needs no account. To add through MCP,
+run `npx nativeanimation login` yourself; your agent can also use the free source folders without a session.
+Paid pieces cost **$9 each or $149 for the catalog**.
 
 ## Compatibility
 

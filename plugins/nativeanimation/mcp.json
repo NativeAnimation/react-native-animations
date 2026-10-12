@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "nativeanimation": {
+      "command": "npx",
+      "args": ["-y", "nativeanimation@latest", "mcp"]
+    }
+  }
+}
