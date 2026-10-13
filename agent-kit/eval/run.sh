@@ -130,14 +130,39 @@ PY
   }]
 }
 JSON
-    trust_config=$(python3 - "$app_root" <<'PY'
+    # This mode tests MCP + skill integration, not plugin marketplace loading.
+    mcp_config_args=(
+      -c 'mcp_servers.nativeanimation.command="npx"'
+      -c 'mcp_servers.nativeanimation.args=["-y","nativeanimation@latest","mcp"]'
+      -c 'mcp_servers.nativeanimation.enabled=true'
+      -c 'plugins."nativeanimation@nativeanimation-eval".enabled=false'
+    )
+    if [[ ${EVAL_ACCESS:-existing} == free ]]; then
+      mcp_env_config=$(python3 - "$run_root/mcp-config" <<'PYENV'
 import json, sys
-print('projects.' + json.dumps(sys.argv[1]) + '.trust_level="trusted"')
-PY
+print('mcp_servers.nativeanimation.env.XDG_CONFIG_HOME=' + json.dumps(sys.argv[1]))
+PYENV
 )
+      mcp_config_args+=(-c "$mcp_env_config")
+    fi
+    prompt+=$'\nRead the bundled skill at '
+    prompt+="$plugin_root/skills/react-native-animations/SKILL.md."
+    printf '%s\n' "$prompt" > "$run_root/prompt.txt"
+    stage=mcp-preflight
+    timeout 30 "$agent_binary" "${mcp_config_args[@]}" mcp list --json \
+      > "$run_root/mcp-list.json" 2> "$run_root/mcp-list.log"
+    python3 - "$run_root/mcp-list.json" <<'PYCHECK'
+import json, sys
+servers = json.load(open(sys.argv[1]))
+if not any(server.get('name') == 'nativeanimation'
+           and server.get('enabled') is True
+           and server.get('disabled_reason') is None for server in servers):
+    raise SystemExit('MCP preflight failed: nativeanimation must be enabled; see mcp-list.json and mcp-list.log')
+PYCHECK
+    stage=agent
     timeout "${EVAL_TIMEOUT_SECONDS:-900}" "$agent_binary" \
       -a never -s workspace-write exec --ignore-user-config --ephemeral --json \
-      -c "$trust_config" -c 'plugins."nativeanimation@nativeanimation-eval".enabled=true' \
+      "${mcp_config_args[@]}" \
       -c 'sandbox_workspace_write.network_access=true' "$prompt" \
       > "$run_root/agent.log" 2>&1 || agent_status=$?
     ;;
