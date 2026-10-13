@@ -135,8 +135,20 @@ JSON
       -c 'mcp_servers.nativeanimation.command="npx"'
       -c 'mcp_servers.nativeanimation.args=["-y","nativeanimation@latest","mcp"]'
       -c 'mcp_servers.nativeanimation.enabled=true'
+      -c 'mcp_servers.nativeanimation.required=true'
+      -c 'mcp_servers.nativeanimation.startup_timeout_sec=60'
+      # Codex does not pass the caller's environment to MCP servers: forward the eval token (signed_in=false otherwise).
+      -c 'mcp_servers.nativeanimation.env_vars=["NATIVEANIMATION_TOKEN"]'
       -c 'plugins."nativeanimation@nativeanimation-eval".enabled=false'
     )
+    # npx must not write to a read-only user cache in the evaluation host.
+    mkdir -p "$run_root/npm-cache"
+    mcp_cache_config=$(python3 - "$run_root/npm-cache" <<'PYCACHE'
+import json, sys
+print('mcp_servers.nativeanimation.env.npm_config_cache=' + json.dumps(sys.argv[1]))
+PYCACHE
+)
+    mcp_config_args+=(-c "$mcp_cache_config")
     if [[ ${EVAL_ACCESS:-existing} == free ]]; then
       mcp_env_config=$(python3 - "$run_root/mcp-config" <<'PYENV'
 import json, sys
@@ -149,15 +161,32 @@ PYENV
     prompt+="$plugin_root/skills/react-native-animations/SKILL.md."
     printf '%s\n' "$prompt" > "$run_root/prompt.txt"
     stage=mcp-preflight
-    timeout 30 "$agent_binary" "${mcp_config_args[@]}" mcp list --json \
-      > "$run_root/mcp-list.json" 2> "$run_root/mcp-list.log"
-    python3 - "$run_root/mcp-list.json" <<'PYCHECK'
+    timeout 120 "$agent_binary" \
+      -a never -s workspace-write exec --ignore-user-config --ephemeral --json \
+      "${mcp_config_args[@]}" \
+      -c 'sandbox_workspace_write.network_access=true' \
+      'Call the nativeanimation MCP search_pieces tool once with query "toggle". Use only the native MCP tool; no shell, web, files, custom clients, login, or purchases. If unavailable, say unavailable and stop.' \
+      < /dev/null > "$run_root/mcp-preflight.jsonl" 2> "$run_root/mcp-preflight.log"
+    python3 - "$run_root/mcp-preflight.jsonl" <<'PYCHECK'
 import json, sys
-servers = json.load(open(sys.argv[1]))
-if not any(server.get('name') == 'nativeanimation'
-           and server.get('enabled') is True
-           and server.get('disabled_reason') is None for server in servers):
-    raise SystemExit('MCP preflight failed: nativeanimation must be enabled; see mcp-list.json and mcp-list.log')
+events = [json.loads(line) for line in open(sys.argv[1]) if line.strip()]
+calls = []
+for event in events:
+    item = event.get('item', {})
+    if event.get('type') == 'item.completed' and item.get('type') == 'mcp_tool_call':
+        result = item.get('result') or {}
+        if (item.get('server') == 'nativeanimation'
+                and item.get('tool') == 'search_pieces'
+                and item.get('arguments') == {'query': 'toggle'}
+                and item.get('status') == 'completed'
+                and not item.get('error') and not result.get('isError')
+                and result.get('content')):
+            calls.append(item)
+if (len(calls) != 1
+        or not any(event.get('type') == 'turn.completed' for event in events)
+        or any(event.get('type') in ('error', 'turn.failed')
+               or event.get('item', {}).get('type') == 'command_execution' for event in events)):
+    raise SystemExit('MCP preflight failed: a successful native search_pieces call is required; see mcp-preflight.jsonl and mcp-preflight.log')
 PYCHECK
     stage=agent
     timeout "${EVAL_TIMEOUT_SECONDS:-900}" "$agent_binary" \
