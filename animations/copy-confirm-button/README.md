@@ -44,6 +44,7 @@ import { CopyConfirmButton } from './CopyConfirmButton';
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
+| `blurTarget` | `React.RefObject<View \| null>` | `undefined` | Android backdrop ref. Wrap host content behind the component in `BlurTargetView` and pass its ref; keep the blur outside that target. |
 | `copied` | `boolean` | — | Controls the confirmation state externally. |
 | `defaultCopied` | `boolean` | `false` | Sets the initial uncontrolled state. |
 | `onCopy` | `() => void` | Required | Performs the application's copy operation. |
@@ -70,3 +71,10 @@ Built for Expo SDK 57, React Native 0.86, Reanimated 4.5, and React Native Skia 
 ## Accessibility
 
 The control exposes a labeled button and a selected confirmation state. The label updates to announce success. With Reduce Motion enabled, the icon and surface crossfade without travel, the glow and text shimmer are removed, and the confirmation pill remains stationary with a 10-point gap above the button.
+
+For Android blur, wrap the backdrop in `BlurTargetView` from `expo-blur`, create its ref with `useRef<View | null>(null)`, and pass that ref as `blurTarget`. The target must cover the blur bounds and exclude the blur itself. Without a target, the existing tint/background remains the fallback. `dimezisBlurViewSdk31Plus` enables blur on Android 12 and newer while keeping the fallback on older Android versions.
+
+
+## Customization notes
+
+resetMs controls how long confirmation remains visible. Press and checkmark feedback use interruptible springs.

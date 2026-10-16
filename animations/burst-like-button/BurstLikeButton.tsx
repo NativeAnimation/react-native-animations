@@ -84,13 +84,13 @@ function Particle({
   const particleSize = size * (spec.heart ? 0.2 : 0.1) * spec.scale;
   const animatedStyle = useAnimatedStyle(() => {
     const localProgress = interpolate(
-      burst.value,
+      burst.get(),
       [spec.delay, 0.94],
       [0, 1],
       Extrapolation.CLAMP,
     );
     const launch = 1 - Math.pow(1 - localProgress, 2.25);
-    const radius = size * spec.distance * power.value;
+    const radius = size * spec.distance * power.get();
     return {
       opacity: reducedMotion
         ? 0
@@ -267,11 +267,11 @@ export const BurstLikeButton = forwardRef<
           ? 1
           : withSequence(
               withSpring(superLike ? 1.34 : 1.25, {
-                damping: 10,
+                damping: 27,
                 stiffness: 390,
                 mass: 0.72,
               }),
-              withSpring(1, { damping: 18, stiffness: 270 }),
+              withSpring(1, { damping: 53, stiffness: 270 }),
             ),
       );
     },
@@ -288,13 +288,13 @@ export const BurstLikeButton = forwardRef<
           ? next
             ? 1
             : 0
-          : withSpring(next ? 1 : 0, { damping: 22, stiffness: 310 }),
+          : withSpring(next ? 1 : 0, { damping: 57, stiffness: 310 }),
       );
       if (next) playBurst(forceBurst);
       else {
         burst.set(1);
         heartScale.set(
-          reducedMotion ? 1 : withSpring(0.92, { damping: 24, stiffness: 320 }),
+          reducedMotion ? 1 : withSpring(0.92, { damping: 58, stiffness: 320 }),
         );
       }
       if (emit) onChange?.(next);
@@ -344,14 +344,14 @@ export const BurstLikeButton = forwardRef<
   );
 
   const heartStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: heartScale.value }],
+    transform: [{ scale: heartScale.get() }],
   }));
   const activeHeartStyle = useAnimatedStyle(() => ({
-    opacity: likedProgress.value,
+    opacity: likedProgress.get(),
     transform: [
       {
         scale: interpolate(
-          likedProgress.value,
+          likedProgress.get(),
           [0, 1],
           [0.84, 1],
           Extrapolation.CLAMP,
@@ -362,31 +362,31 @@ export const BurstLikeButton = forwardRef<
   const waveStyle = useAnimatedStyle(() => ({
     opacity: reducedMotion
       ? 0
-      : interpolate(burst.value, [0, 0.08, 0.72, 1], [0, 0.82, 0.28, 0]),
+      : interpolate(burst.get(), [0, 0.08, 0.72, 1], [0, 0.82, 0.28, 0]),
     transform: [
       {
-        scale: interpolate(burst.value, [0, 1], [0.52, 1.7 * burstPower.value]),
+        scale: interpolate(burst.get(), [0, 1], [0.52, 1.7 * burstPower.get()]),
       },
     ],
   }));
   const chargeStyle = useAnimatedStyle(() => ({
     opacity: reducedMotion
       ? 0
-      : interpolate(charge.value, [0, 0.18, 1], [0, 0.2, 0.72]),
-    transform: [{ scale: interpolate(charge.value, [0, 1], [0.8, 1.22]) }],
+      : interpolate(charge.get(), [0, 0.18, 1], [0, 0.2, 0.72]),
+    transform: [{ scale: interpolate(charge.get(), [0, 1], [0.8, 1.22]) }],
   }));
   const oldCountStyle = useAnimatedStyle(() => ({
-    opacity: 1 - countRoll.value,
+    opacity: 1 - countRoll.get(),
     transform: [
-      { translateY: (currentLiked ? -1 : 1) * countRoll.value * size * 0.72 },
+      { translateY: (currentLiked ? -1 : 1) * countRoll.get() * size * 0.72 },
     ],
   }));
   const newCountStyle = useAnimatedStyle(() => ({
-    opacity: countRoll.value,
+    opacity: countRoll.get(),
     transform: [
       {
         translateY:
-          (currentLiked ? 1 : -1) * (1 - countRoll.value) * size * 0.72,
+          (currentLiked ? 1 : -1) * (1 - countRoll.get()) * size * 0.72,
       },
     ],
   }));
@@ -426,7 +426,7 @@ export const BurstLikeButton = forwardRef<
         heartScale.set(
           reducedMotion
             ? 1
-            : withSpring(0.8, { damping: 24, stiffness: 420, mass: 0.72 }),
+            : withSpring(0.8, { damping: 28, stiffness: 420, mass: 0.72 }),
         );
         charge.set(
           reducedMotion
@@ -442,7 +442,7 @@ export const BurstLikeButton = forwardRef<
         charge.set(withTiming(0, { duration: reducedMotion ? 0 : 180 }));
         if (!longPressActivated.current) {
           heartScale.set(
-            reducedMotion ? 1 : withSpring(1, { damping: 22, stiffness: 320 }),
+            reducedMotion ? 1 : withSpring(1, { damping: 58, stiffness: 320 }),
           );
         }
       }}
@@ -573,6 +573,8 @@ export const BurstLikeButton = forwardRef<
             ]}
           >
             <Animated.Text
+              accessibilityElementsHidden={true}
+              importantForAccessibility={true ? 'no-hide-descendants' : 'auto'}
               aria-hidden
               style={[styles.countMeasure, countStyle]}
             >

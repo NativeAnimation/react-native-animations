@@ -3,6 +3,7 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   Easing,
+  cancelAnimation,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -46,6 +47,9 @@ export function SkeletonBlock({
   );
 }
 export type ShimmerSkeletonProps = {
+  /** Test identifier applied to the outer container. */
+  testID?: string;
+
   /** Shows placeholders while true. @default true */ loading?: boolean;
   /** Content revealed after loading. */ children?: React.ReactNode;
   /** Placeholder layout that receives the shared shimmer. */
@@ -58,6 +62,8 @@ export type ShimmerSkeletonProps = {
 };
 /** A premium skeleton group whose diagonal highlight is shared by all its blocks. */
 export default function ShimmerSkeleton({
+  testID,
+
   loading = true,
   children,
   placeholder,
@@ -72,7 +78,7 @@ export default function ShimmerSkeleton({
   const reveal = useSharedValue(loading ? 0 : 1);
   useEffect(() => {
     sweep.set(
-      reduced
+      reduced || !loading
         ? 0
         : withRepeat(
             withTiming(1, { duration, easing: Easing.linear }),
@@ -80,7 +86,8 @@ export default function ShimmerSkeleton({
             false,
           ),
     );
-  }, [duration, reduced, sweep]);
+    return () => cancelAnimation(sweep);
+  }, [duration, loading, reduced, sweep]);
   useEffect(() => {
     reveal.set(
       reduced
@@ -95,20 +102,25 @@ export default function ShimmerSkeleton({
   }, [loading, reduced, reveal]);
   const shine = useAnimatedStyle(() => ({
     transform: [
-      { translateX: `${-120 + sweep.value * 240}%` },
+      { translateX: `${-120 + sweep.get() * 240}%` },
       { skewX: '-18deg' },
     ],
   }));
-  const content = useAnimatedStyle(() => ({ opacity: reveal.value }));
-  const shell = useAnimatedStyle(() => ({ opacity: 1 - reveal.value }));
+  const content = useAnimatedStyle(() => ({ opacity: reveal.get() }));
+  const shell = useAnimatedStyle(() => ({ opacity: 1 - reveal.get() }));
   const skeleton = placeholder ?? children;
   return (
     <View
+      testID={testID}
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ busy: loading }}
       style={[styles.root, style]}
     >
       <Animated.View
+        testID={testID ? `${testID}-placeholder` : undefined}
+        accessibilityElementsHidden={!loading}
+        importantForAccessibility={loading ? 'auto' : 'no-hide-descendants'}
+        aria-hidden={!loading}
         pointerEvents={loading ? 'auto' : 'none'}
         style={[StyleSheet.absoluteFill, shell]}
       >
@@ -130,7 +142,14 @@ export default function ShimmerSkeleton({
           </Animated.View>
         </View>
       </Animated.View>
-      <Animated.View pointerEvents={loading ? 'none' : 'auto'} style={content}>
+      <Animated.View
+        testID={testID ? `${testID}-content` : undefined}
+        accessibilityElementsHidden={loading}
+        importantForAccessibility={loading ? 'no-hide-descendants' : 'auto'}
+        aria-hidden={loading}
+        pointerEvents={loading ? 'none' : 'auto'}
+        style={content}
+      >
         {children}
       </Animated.View>
     </View>

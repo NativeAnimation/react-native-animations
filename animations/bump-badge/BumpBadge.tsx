@@ -25,6 +25,12 @@ export type BumpBadgeRef = {
   /** Sets the count. */ setCount: (count: number) => void;
 };
 export type BumpBadgeProps = {
+  /** Font family for component text. Omit to preserve the existing font. */
+  fontFamily?: string;
+
+  /** Test identifier applied to the outer container. */
+  testID?: string;
+
   /** Controlled count. */ value?: number;
   /** Initial uncontrolled count. @default 3 */ defaultValue?: number;
   /** Called after a count request. */ onChange?: (count: number) => void;
@@ -37,6 +43,10 @@ export type BumpBadgeProps = {
 export const BumpBadge = forwardRef<BumpBadgeRef, BumpBadgeProps>(
   function BumpBadge(
     {
+      fontFamily,
+
+      testID,
+
       value,
       defaultValue = 3,
       onChange,
@@ -64,8 +74,8 @@ export const BumpBadge = forwardRef<BumpBadgeRef, BumpBadgeProps>(
               : 0
             : count
               ? withSequence(
-                  withSpring(1.35, { damping: 12, stiffness: 240 }),
-                  withSpring(1, { damping: 14, stiffness: 220 }),
+                  withSpring(1.35, { damping: 50, stiffness: 240 }),
+                  withSpring(1, { damping: 48, stiffness: 220 }),
                 )
               : withTiming(0, { duration: 180 }),
         );
@@ -90,48 +100,57 @@ export const BumpBadge = forwardRef<BumpBadgeRef, BumpBadgeProps>(
       [onChange, value],
     );
     const badge = useAnimatedStyle(() => ({
-      transform: [{ scale: scale.value }],
+      transform: [{ scale: scale.get() }],
     }));
     const bell = useAnimatedStyle(() => ({
-      transform: [{ rotate: `${shake.value * 8}deg` }],
+      transform: [{ rotate: `${shake.get() * 8}deg` }],
     }));
     const label = count > 99 ? '99+' : String(count);
     return (
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel}
-        accessibilityState={{ disabled: false }}
-        onPress={() => {
-          const next = count + 1;
-          if (value === undefined) setInternal(next);
-          onChange?.(next);
-        }}
-        style={[styles.hit, style]}
-      >
-        <Animated.View style={bell}>
-          <View
-            style={[
-              styles.bell,
-              { width: size, height: size, borderColor: color },
-            ]}
-          >
-            <View style={[styles.clapper, { backgroundColor: color }]} />
-          </View>
-        </Animated.View>
-        {count > 0 && (
-          <Animated.View
-            style={[styles.badge, { backgroundColor: color }, badge]}
-          >
-            <Text style={styles.number}>{label}</Text>
+      <View testID={testID} style={[styles.hit, style]}>
+        <Pressable
+          testID={testID ? `${testID}-increment` : undefined}
+          accessibilityRole="button"
+          accessibilityLabel={accessibilityLabel}
+          accessibilityState={{ disabled: false }}
+          onPress={() => {
+            const next = count + 1;
+            if (value === undefined) setInternal(next);
+            onChange?.(next);
+          }}
+          style={styles.button}
+        >
+          <Animated.View style={bell}>
+            <View
+              style={[
+                styles.bell,
+                { width: size, height: size, borderColor: color },
+              ]}
+            >
+              <View style={[styles.clapper, { backgroundColor: color }]} />
+            </View>
           </Animated.View>
-        )}
-      </Pressable>
+          {count > 0 && (
+            <Animated.View
+              testID={testID ? `${testID}-count` : undefined}
+              style={[styles.badge, { backgroundColor: color }, badge]}
+            >
+              <Text
+                style={[styles.number, fontFamily ? { fontFamily } : undefined]}
+              >
+                {label}
+              </Text>
+            </Animated.View>
+          )}
+        </Pressable>
+      </View>
     );
   },
 );
 export default BumpBadge;
 const styles = StyleSheet.create({
   hit: { height: 60, justifyContent: 'center', width: 60 },
+  button: { flex: 1, justifyContent: 'center' },
   bell: {
     borderRadius: 20,
     borderWidth: 2.5,

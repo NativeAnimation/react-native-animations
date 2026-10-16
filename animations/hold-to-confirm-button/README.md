@@ -34,25 +34,26 @@ npx expo install expo-linear-gradient react-native-gesture-handler react-native-
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `confirmed` | `boolean` | — | Controlled completion state. |
-| `defaultConfirmed` | `boolean` | `false` | Initial uncontrolled state. |
-| `onChange` | `(confirmed: boolean) => void` | — | Receives state changes. |
-| `onConfirm` | `() => void` | — | Runs when confirmation completes. |
-| `holdMs` | `number` | `1200` | Required hold duration. |
+| `confirmed` | `boolean` | `undefined` | Controlled completion state. |
+| `defaultConfirmed` | `boolean` | `false` | Initial completion state when uncontrolled. |
+| `onChange` | `(confirmed: boolean) => void` | `undefined` | Called when the completion state changes. |
+| `onConfirm` | `() => void` | `undefined` | Called once a hold completes. |
+| `holdMs` | `number` | `1200` | Hold duration in milliseconds. |
 | `variant` | `'bar' \| 'ring'` | `'bar'` | Progress presentation. |
-| `label` | `string` | `'Hold to confirm'` | Idle text. |
-| `doneLabel` | `string` | `'Confirmed'` | Completed text. |
-| `width` | `number` | `240` | Bar width. |
-| `height` | `number` | `56` | Height or ring diameter. |
-| `backgroundColor` | `string` | Scheme-aware | Base color. |
-| `backgroundEndColor` | `string` | Scheme-aware | End color for the material gradient. |
+| `label` | `string` | `'Hold to confirm'` | Idle instruction. |
+| `doneLabel` | `string` | `'Confirmed'` | Completion text. |
+| `width` | `number` | `240` | Button width for the bar variant. |
+| `height` | `number` | `56` | Button height, and ring diameter. |
+| `backgroundColor` | `string` | `undefined` | Base button color. Defaults to a scheme-aware near-black. |
+| `backgroundEndColor` | `string` | `undefined` | Nearby end color for the material gradient. |
 | `progressColor` | `string` | `'#6D5DFB'` | Progress color. |
-| `textColor` | `string` | `'#FFFFFF'` | Content color. |
-| `fontFamily` | `string` | System font | Label font. |
-| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Surface color treatment. |
-| `accessibilityLabel` | `string` | Uses `label` | Screen-reader label. |
-| `style` | `StyleProp<ViewStyle>` | — | Outer style. |
-| `testID` | `string` | — | Test identifier. |
+| `textColor` | `string` | `'#FFFFFF'` | Text and check color. |
+| `fontFamily` | `string` | `undefined` | Font family for the label. |
+| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Color treatment, or the device setting when set to auto. |
+| `accessibilityLabel` | `string` | `label` | Screen-reader label. |
+| `style` | `StyleProp<ViewStyle>` | `undefined` | Style for the outer container. |
+| `testID` | `string` | `undefined` | Test identifier for the interactive control. |
+| `duration` | `number` | `520` | Post-confirmation success wave duration in milliseconds; holdMs is separate. Spring physics and reduced-motion timing are unchanged. |
 
 ## Compatibility
 

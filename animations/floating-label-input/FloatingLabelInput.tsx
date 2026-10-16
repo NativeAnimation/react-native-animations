@@ -35,7 +35,7 @@ import Animated, {
 
 const DEFAULT_DURATION = 220;
 const DEFAULT_HEIGHT = 56;
-const LABEL_SPRING = { damping: 22, stiffness: 320, mass: 0.9 };
+const LABEL_SPRING = { damping: 28, stiffness: 320, mass: 0.9 };
 
 /** Imperative controls for the floating-label field. */
 export type FloatingLabelInputRef = {
@@ -113,12 +113,12 @@ function StatusGlyph({
   state: 'valid' | 'invalid';
 }) {
   const shellStyle = useAnimatedStyle(() => ({
-    opacity: progress.value,
-    transform: [{ scale: interpolate(progress.value, [0, 1], [0.86, 1]) }],
+    opacity: progress.get(),
+    transform: [{ scale: interpolate(progress.get(), [0, 1], [0.86, 1]) }],
   }));
   const shortStrokeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
-      progress.value,
+      progress.get(),
       [0.08, 0.34],
       [0, 1],
       Extrapolation.CLAMP,
@@ -126,7 +126,7 @@ function StatusGlyph({
     transform: [
       {
         scaleX: interpolate(
-          progress.value,
+          progress.get(),
           [0.08, 0.48],
           [0, 1],
           Extrapolation.CLAMP,
@@ -137,7 +137,7 @@ function StatusGlyph({
   }));
   const longStrokeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
-      progress.value,
+      progress.get(),
       [0.35, 0.58],
       [0, 1],
       Extrapolation.CLAMP,
@@ -145,7 +145,7 @@ function StatusGlyph({
     transform: [
       {
         scaleX: interpolate(
-          progress.value,
+          progress.get(),
           [0.35, 0.92],
           [0, 1],
           Extrapolation.CLAMP,
@@ -156,7 +156,7 @@ function StatusGlyph({
   }));
   const alertLineStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
-      progress.value,
+      progress.get(),
       [0.3, 0.62],
       [0, 1],
       Extrapolation.CLAMP,
@@ -164,7 +164,7 @@ function StatusGlyph({
     transform: [
       {
         scaleY: interpolate(
-          progress.value,
+          progress.get(),
           [0.3, 0.75],
           [0, 1],
           Extrapolation.CLAMP,
@@ -174,7 +174,7 @@ function StatusGlyph({
   }));
   const alertDotStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
-      progress.value,
+      progress.get(),
       [0.66, 0.9],
       [0, 1],
       Extrapolation.CLAMP,
@@ -182,7 +182,7 @@ function StatusGlyph({
     transform: [
       {
         scale: interpolate(
-          progress.value,
+          progress.get(),
           [0.66, 1],
           [0.4, 1],
           Extrapolation.CLAMP,
@@ -193,6 +193,7 @@ function StatusGlyph({
 
   return (
     <Animated.View
+      aria-hidden={true}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       style={[
@@ -341,7 +342,7 @@ export const FloatingLabelInput = forwardRef<
     statusProgress.set(
       reducedMotion
         ? 1
-        : withSpring(1, { damping: 17, stiffness: 260, mass: 0.8 }),
+        : withSpring(1, { damping: 24, stiffness: 260, mass: 0.8 }),
     );
   }, [duration, reducedMotion, state, statusProgress]);
 
@@ -408,16 +409,16 @@ export const FloatingLabelInput = forwardRef<
       state === 'invalid'
         ? errorColor
         : interpolateColor(
-            focusProgress.value,
+            focusProgress.get(),
             [0, 1],
             [mutedColor, accentColor],
           ),
-    fontSize: interpolate(labelProgress.value, [0, 1], [16, 11.5]),
-    letterSpacing: interpolate(labelProgress.value, [0, 1], [0, 0.18]),
+    fontSize: interpolate(labelProgress.get(), [0, 1], [16, 11.5]),
+    letterSpacing: interpolate(labelProgress.get(), [0, 1], [0, 0.18]),
     transform: [
       {
         translateY: interpolate(
-          labelProgress.value,
+          labelProgress.get(),
           [0, 1],
           [0, -height * 0.22],
         ),
@@ -425,35 +426,35 @@ export const FloatingLabelInput = forwardRef<
     ],
   }));
   const focusGlowStyle = useAnimatedStyle(() => ({
-    opacity: state === 'invalid' ? 0 : focusProgress.value * 0.18,
-    transform: [{ scale: 0.985 + focusProgress.value * 0.015 }],
+    opacity: state === 'invalid' ? 0 : focusProgress.get() * 0.18,
+    transform: [{ scale: 0.985 + focusProgress.get() * 0.015 }],
   }));
   const topLeftLightStyle = useAnimatedStyle(() => ({
-    left: touchX.value * (1 - lightProgress.value),
-    opacity: focusProgress.value,
-    width: touchX.value * lightProgress.value,
+    left: touchX.get() * (1 - lightProgress.get()),
+    opacity: focusProgress.get(),
+    width: touchX.get() * lightProgress.get(),
   }));
   const topRightLightStyle = useAnimatedStyle(() => ({
-    left: touchX.value,
-    opacity: focusProgress.value,
-    width: Math.max(0, fieldSize.width - touchX.value) * lightProgress.value,
+    left: touchX.get(),
+    opacity: focusProgress.get(),
+    width: Math.max(0, fieldSize.width - touchX.get()) * lightProgress.get(),
   }));
   const leftTopLightStyle = useAnimatedStyle(() => ({
-    height: touchY.value * lightProgress.value,
-    opacity: focusProgress.value,
-    top: touchY.value * (1 - lightProgress.value),
+    height: touchY.get() * lightProgress.get(),
+    opacity: focusProgress.get(),
+    top: touchY.get() * (1 - lightProgress.get()),
   }));
   const leftBottomLightStyle = useAnimatedStyle(() => ({
-    height: Math.max(0, fieldSize.height - touchY.value) * lightProgress.value,
-    opacity: focusProgress.value,
-    top: touchY.value,
+    height: Math.max(0, fieldSize.height - touchY.get()) * lightProgress.get(),
+    opacity: focusProgress.get(),
+    top: touchY.get(),
   }));
   const messageStyle = useAnimatedStyle(() => ({
-    filter: [{ blur: (1 - messageProgress.value) * 4 }],
-    height: messageProgress.value * 24,
-    opacity: messageProgress.value,
+    filter: [{ blur: (1 - messageProgress.get()) * 4 }],
+    height: messageProgress.get() * 24,
+    opacity: messageProgress.get(),
     transform: [
-      { translateY: interpolate(messageProgress.value, [0, 1], [-5, 0]) },
+      { translateY: interpolate(messageProgress.get(), [0, 1], [-5, 0]) },
     ],
   }));
 

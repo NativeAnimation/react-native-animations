@@ -1,3 +1,4 @@
+// The blur carries its own radius: a backdrop blur is not clipped to the parent's rounded corners.
 import {
   createContext,
   forwardRef,
@@ -38,9 +39,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-const STACK_SPRING = { damping: 22, stiffness: 320, mass: 1 };
-const DISMISS_SPRING = { damping: 18, stiffness: 260, mass: 1 };
-const PRESS_SPRING = { damping: 20, stiffness: 360, mass: 0.8 };
+const STACK_SPRING = { damping: 29, stiffness: 320, mass: 1 };
+const DISMISS_SPRING = { damping: 26, stiffness: 260, mass: 1 };
+const PRESS_SPRING = { damping: 28, stiffness: 360, mass: 0.8 };
 const CARD_HEIGHT = 84;
 const EXPANDED_GAP = 8;
 const COMPACT_LAYERS = 3;
@@ -162,7 +163,7 @@ function ScalePressable({
 }) {
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [{ scale: scale.get() }],
   }));
 
   return (
@@ -183,6 +184,7 @@ function ScalePressable({
 }
 
 function ToastCard({
+  colors,
   blurTarget,
   expandedProgress,
   fontFamily,
@@ -194,6 +196,7 @@ function ToastCard({
   titleFontFamily,
   toggleExpanded,
 }: {
+  colors?: ToastProviderProps['colors'];
   blurTarget: React.RefObject<View | null>;
   expandedProgress: SharedValue<number>;
   fontFamily?: string;
@@ -209,7 +212,10 @@ function ToastCard({
   const translateX = useSharedValue(0);
   const entry = useSharedValue(reducedMotion ? 1 : 0);
   const glow = useSharedValue(0);
-  const visual = getToastVisual(item.type ?? 'info');
+  const visual = {
+    ...getToastVisual(item.type ?? 'info'),
+    ...colors?.[item.type ?? 'info'],
+  };
   const progress = Math.max(0, Math.min(1, item.progress ?? 0));
 
   useEffect(() => {
@@ -217,7 +223,7 @@ function ToastCard({
       entry.set(withTiming(1, { duration: 180 }));
       return;
     }
-    entry.set(withSpring(1, { damping: 19, stiffness: 270, mass: 0.9 }));
+    entry.set(withSpring(1, { damping: 25, stiffness: 270, mass: 0.9 }));
     glow.set(
       withSequence(
         withTiming(1, { duration: 120 }),
@@ -237,7 +243,7 @@ function ToastCard({
   }, [item.id, onDismiss]);
 
   /* Gesture callbacks run as worklets and intentionally mutate shared values. */
-  /* eslint-disable react-hooks/immutability */
+
   const pan = useMemo(
     () =>
       Gesture.Pan()
@@ -248,41 +254,44 @@ function ToastCard({
           const resistance =
             (distance * stackWidth * 0.55) /
             (stackWidth + 0.55 * Math.abs(distance));
-          translateX.value = resistance;
+          translateX.set(resistance);
         })
         .onFinalize((event) => {
           const projection =
-            translateX.value + (event.velocityX / 1000) * (0.998 / (1 - 0.998));
+            translateX.get() + (event.velocityX / 1000) * (0.998 / (1 - 0.998));
           if (Math.abs(projection) > stackWidth * 0.42) {
             const direction = projection < 0 ? -1 : 1;
-            translateX.value = reducedMotion
-              ? withTiming(
-                  direction * stackWidth * 1.25,
-                  { duration: 140 },
-                  () => scheduleOnRN(finishDismiss),
-                )
-              : withSpring(
-                  direction * stackWidth * 1.25,
-                  { ...DISMISS_SPRING, velocity: event.velocityX },
-                  (finished) => {
-                    if (finished) scheduleOnRN(finishDismiss);
-                  },
-                );
+            translateX.set(
+              reducedMotion
+                ? withTiming(
+                    direction * stackWidth * 1.25,
+                    { duration: 140 },
+                    () => scheduleOnRN(finishDismiss),
+                  )
+                : withSpring(
+                    direction * stackWidth * 1.25,
+                    { ...DISMISS_SPRING, velocity: event.velocityX },
+                    (finished) => {
+                      if (finished) scheduleOnRN(finishDismiss);
+                    },
+                  ),
+            );
           } else {
-            translateX.value = reducedMotion
-              ? withTiming(0, { duration: 150 })
-              : withSpring(0, {
-                  ...DISMISS_SPRING,
-                  velocity: event.velocityX,
-                });
+            translateX.set(
+              reducedMotion
+                ? withTiming(0, { duration: 150 })
+                : withSpring(0, {
+                    ...DISMISS_SPRING,
+                    velocity: event.velocityX,
+                  }),
+            );
           }
         }),
     [finishDismiss, reducedMotion, stackWidth, translateX],
   );
-  /* eslint-enable react-hooks/immutability */
 
   const cardStyle = useAnimatedStyle(() => {
-    const open = expandedProgress.value;
+    const open = expandedProgress.get();
     const compactY = index * 10;
     const fanY = index * (CARD_HEIGHT + EXPANDED_GAP);
     const layoutOpen = reducedMotion ? (open >= 0.5 ? 1 : 0) : open;
@@ -310,28 +319,28 @@ function ToastCard({
         },
       ],
       opacity:
-        interpolate(entry.value, [0, 1], [0, 1], Extrapolation.CLAMP) *
+        interpolate(entry.get(), [0, 1], [0, 1], Extrapolation.CLAMP) *
         layerOpacity *
         reducedMotionOpacity,
       transform: [
         {
           translateX:
-            translateX.value +
-            interpolate(entry.value, [0, 1], [36, 0], Extrapolation.CLAMP),
+            translateX.get() +
+            interpolate(entry.get(), [0, 1], [36, 0], Extrapolation.CLAMP),
         },
         {
           translateY:
             interpolate(layoutOpen, [0, 1], [compactY, fanY]) +
-            interpolate(entry.value, [0, 1], [-18, 0]),
+            interpolate(entry.get(), [0, 1], [-18, 0]),
         },
-        { scale: depthScale * interpolate(entry.value, [0, 1], [0.96, 1]) },
+        { scale: depthScale * interpolate(entry.get(), [0, 1], [0.96, 1]) },
       ],
       zIndex: 100 - index,
     };
   });
   const glowStyle = useAnimatedStyle(() => ({
-    opacity: glow.value,
-    transform: [{ scale: interpolate(glow.value, [0, 1], [1.02, 1]) }],
+    opacity: glow.get(),
+    transform: [{ scale: interpolate(glow.get(), [0, 1], [1.02, 1]) }],
   }));
 
   const isMessage = item.type === 'message';
@@ -378,6 +387,7 @@ function ToastCard({
             >
               {isMessage ? (
                 <View
+                  aria-hidden={true}
                   accessibilityElementsHidden
                   importantForAccessibility="no-hide-descendants"
                   style={[
@@ -483,6 +493,8 @@ function ToastCard({
 }
 
 export type ToastProviderProps = {
+  /** Optional accent and translucent surface colors by toast type. Omit to keep the built-in semantic palette. */
+  colors?: Partial<Record<ToastType, { accent: string; accentSoft: string }>>;
   /** App content rendered beneath the toast layer. */
   children: ReactNode;
   /** Default auto-dismiss delay in milliseconds. @default 5000 */
@@ -509,6 +521,7 @@ export type ToastProviderProps = {
 export const ToastProvider = forwardRef<ToastProviderRef, ToastProviderProps>(
   function ToastProvider(
     {
+      colors,
       children,
       duration = 5000,
       maxVisible = 5,
@@ -622,7 +635,7 @@ export const ToastProvider = forwardRef<ToastProviderRef, ToastProviderProps>(
     const contentStyle = useAnimatedStyle(() => ({
       opacity: reducedMotion
         ? interpolate(
-            expandedProgress.value,
+            expandedProgress.get(),
             [0, 1],
             [1, 0.12],
             Extrapolation.CLAMP,
@@ -630,13 +643,13 @@ export const ToastProvider = forwardRef<ToastProviderRef, ToastProviderProps>(
         : 1,
       transform: [
         {
-          translateY: reducedMotion ? 0 : expandedProgress.value * contentShift,
+          translateY: reducedMotion ? 0 : expandedProgress.get() * contentShift,
         },
         {
           scale: reducedMotion
             ? 1
             : interpolate(
-                expandedProgress.value,
+                expandedProgress.get(),
                 [0, 1],
                 [1, 0.975],
                 Extrapolation.CLAMP,
@@ -646,7 +659,7 @@ export const ToastProvider = forwardRef<ToastProviderRef, ToastProviderProps>(
     }));
     const backdropStyle = useAnimatedStyle(() => ({
       opacity: interpolate(
-        expandedProgress.value,
+        expandedProgress.get(),
         [0, 1],
         [0, 0.7],
         Extrapolation.CLAMP,
@@ -659,6 +672,11 @@ export const ToastProvider = forwardRef<ToastProviderRef, ToastProviderProps>(
           <BlurTargetView ref={blurTarget} style={styles.content}>
             <Animated.View
               pointerEvents={expanded ? 'none' : 'auto'}
+              accessibilityElementsHidden={expanded}
+              importantForAccessibility={
+                expanded ? 'no-hide-descendants' : 'auto'
+              }
+              aria-hidden={expanded}
               style={[styles.content, contentStyle]}
             >
               {children}
@@ -675,6 +693,7 @@ export const ToastProvider = forwardRef<ToastProviderRef, ToastProviderProps>(
           >
             {items.map((item, index) => (
               <ToastCard
+                colors={colors}
                 blurTarget={blurTarget}
                 expandedProgress={expandedProgress}
                 fontFamily={fontFamily}

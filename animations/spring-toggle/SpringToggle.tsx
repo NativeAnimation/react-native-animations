@@ -68,7 +68,7 @@ export type SpringToggleProps = {
   glowColor?: string;
   /** Optional icon drawn inside the thumb. @default 'none' */
   thumbIcon?: SpringToggleIcon;
-  /** Spring damping. @default 18 */
+  /** Spring damping. @default 24 */
   springDamping?: number;
   /** Spring stiffness. @default 280 */
   springStiffness?: number;
@@ -93,7 +93,7 @@ export const SpringToggle = forwardRef<SpringToggleRef, SpringToggleProps>(
       colorScheme = 'auto',
       glowColor = onColor,
       thumbIcon = 'none',
-      springDamping = 18,
+      springDamping = 24,
       springStiffness = 280,
       accessibilityLabel = 'Toggle setting',
       style,
@@ -128,7 +128,10 @@ export const SpringToggle = forwardRef<SpringToggleRef, SpringToggleProps>(
               ? 1
               : 0
             : withSpring(next ? 1 : 0, {
-                damping: springDamping,
+                damping: Math.max(
+                  springDamping,
+                  1.6 * Math.sqrt(springStiffness * 0.75),
+                ),
                 stiffness: springStiffness,
                 mass: 0.75,
               }),
@@ -138,13 +141,13 @@ export const SpringToggle = forwardRef<SpringToggleRef, SpringToggleProps>(
             ? next
               ? 1
               : 0
-            : withSpring(next ? 1 : 0, { damping: 16, stiffness: 220 }),
+            : withSpring(next ? 1 : 0, { damping: 48, stiffness: 220 }),
         );
         if (next && !reducedMotion) {
           success.set(
             withSequence(
               withTiming(1, { duration: 90 }),
-              withSpring(0, { damping: 13, stiffness: 240 }),
+              withSpring(0, { damping: 50, stiffness: 240 }),
             ),
           );
         }
@@ -204,53 +207,53 @@ export const SpringToggle = forwardRef<SpringToggleRef, SpringToggleProps>(
 
     const trackStyle = useAnimatedStyle(() => ({
       backgroundColor: interpolateColor(
-        progress.value,
+        progress.get(),
         [0, 1],
         [offColor, onColor],
       ),
     }));
     const pressStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: reducedMotion ? 1 : pressScale.value }],
+      transform: [{ scale: reducedMotion ? 1 : pressScale.get() }],
     }));
     const thumbStyle = useAnimatedStyle(() => {
-      const stretch = interpolate(progress.value, [0, 0.5, 1], [1, 1.25, 1]);
+      const stretch = interpolate(progress.get(), [0, 0.5, 1], [1, 1.25, 1]);
       return {
         transform: [
-          { translateX: progress.value * travel },
+          { translateX: progress.get() * travel },
           { scaleX: reducedMotion ? 1 : stretch },
-          { scale: reducedMotion ? 1 : 1 + success.value * 0.09 },
+          { scale: reducedMotion ? 1 : 1 + success.get() * 0.09 },
         ],
       };
     });
     const glowStyle = useAnimatedStyle(() => ({
-      opacity: 0.18 + glow.value * 0.3,
+      opacity: 0.18 + glow.get() * 0.3,
       transform: [
-        { translateX: progress.value * travel },
+        { translateX: progress.get() * travel },
         {
           scale: reducedMotion
             ? 1
-            : 0.82 + glow.value * 0.32 + success.value * 0.2,
+            : 0.82 + glow.get() * 0.32 + success.get() * 0.2,
         },
       ],
     }));
     const sheenStyle = useAnimatedStyle(() => ({
-      opacity: reducedMotion ? 0 : success.value * 0.72,
+      opacity: reducedMotion ? 0 : success.get() * 0.72,
       transform: [
-        { translateX: progress.value * travel + thumbSize * 0.15 },
+        { translateX: progress.get() * travel + thumbSize * 0.15 },
         { rotate: '-18deg' },
       ],
     }));
     const sunStyle = useAnimatedStyle(() => ({
-      opacity: 1 - progress.value,
-      transform: [{ scale: interpolate(progress.value, [0, 1], [1, 0.65]) }],
+      opacity: 1 - progress.get(),
+      transform: [{ scale: interpolate(progress.get(), [0, 1], [1, 0.65]) }],
     }));
     const moonStyle = useAnimatedStyle(() => ({
-      opacity: progress.value,
-      transform: [{ scale: interpolate(progress.value, [0, 1], [0.65, 1]) }],
+      opacity: progress.get(),
+      transform: [{ scale: interpolate(progress.get(), [0, 1], [0.65, 1]) }],
     }));
     const checkStyle = useAnimatedStyle(() => ({
-      opacity: progress.value,
-      transform: [{ scale: interpolate(progress.value, [0, 1], [0.65, 1]) }],
+      opacity: progress.get(),
+      transform: [{ scale: interpolate(progress.get(), [0, 1], [0.65, 1]) }],
     }));
 
     return (
@@ -263,12 +266,12 @@ export const SpringToggle = forwardRef<SpringToggleRef, SpringToggleProps>(
           pressScale.set(
             reducedMotion
               ? 1
-              : withSpring(0.96, { damping: 18, stiffness: 320 }),
+              : withSpring(0.96, { damping: 58, stiffness: 320 }),
           );
         }}
         onPressOut={() => {
           pressScale.set(
-            reducedMotion ? 1 : withSpring(1, { damping: 13, stiffness: 240 }),
+            reducedMotion ? 1 : withSpring(1, { damping: 50, stiffness: 240 }),
           );
         }}
         style={[style, pressStyle]}

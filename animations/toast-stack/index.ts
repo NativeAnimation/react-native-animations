@@ -7,3 +7,5 @@ export {
   type ToastProviderRef,
   type ToastType,
 } from './ToastStack';
+
+export { ToastProvider as default } from './ToastStack';

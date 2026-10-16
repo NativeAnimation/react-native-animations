@@ -44,6 +44,9 @@ export type HoldToConfirmButtonRef = {
 };
 
 export type HoldToConfirmButtonProps = {
+  /** Post-confirmation success wave duration in milliseconds; holdMs is separate. Spring physics and reduced-motion timing are unchanged. @default 520 */
+  duration?: number;
+
   /** Controlled completion state. */
   confirmed?: boolean;
   /** Initial completion state when uncontrolled. @default false */
@@ -104,7 +107,7 @@ function CheckMark({ color, progress, size }: CheckMarkProps) {
       { rotate: '43deg' },
       {
         scaleX: interpolate(
-          progress.value,
+          progress.get(),
           [0.42, 0.66],
           [0, 1],
           Extrapolation.CLAMP,
@@ -117,7 +120,7 @@ function CheckMark({ color, progress, size }: CheckMarkProps) {
       { rotate: '-43deg' },
       {
         scaleX: interpolate(
-          progress.value,
+          progress.get(),
           [0.62, 1],
           [0, 1],
           Extrapolation.CLAMP,
@@ -169,11 +172,11 @@ function RingSegment({ index, progress, color, diameter }: RingSegmentProps) {
   const dotSize = Math.max(3, diameter * 0.055);
   const radius = diameter * 0.43;
   const style = useAnimatedStyle(() => ({
-    opacity: progress.value >= (index + 1) / RING_SEGMENTS ? 1 : 0.16,
+    opacity: progress.get() >= (index + 1) / RING_SEGMENTS ? 1 : 0.16,
     transform: [
       { translateX: Math.cos(angle) * radius },
       { translateY: Math.sin(angle) * radius },
-      { scale: progress.value >= (index + 1) / RING_SEGMENTS ? 1 : 0.72 },
+      { scale: progress.get() >= (index + 1) / RING_SEGMENTS ? 1 : 0.72 },
     ],
   }));
 
@@ -202,6 +205,8 @@ export const HoldToConfirmButton = forwardRef<
   HoldToConfirmButtonProps
 >(function HoldToConfirmButton(
   {
+    duration = 520,
+
     confirmed,
     defaultConfirmed = false,
     onChange,
@@ -264,15 +269,17 @@ export const HoldToConfirmButton = forwardRef<
           reducedMotion
             ? 1
             : withTiming(1, {
-                duration: 520,
+                duration: Number.isFinite(duration)
+                  ? Math.max(0, duration)
+                  : 520,
                 easing: Easing.out(Easing.cubic),
               }),
         );
         pressScale.set(
           reducedMotion
             ? 1
-            : withSpring(1.04, { damping: 13, stiffness: 230 }, () => {
-                pressScale.set(withSpring(1, { damping: 14, stiffness: 210 }));
+            : withSpring(1.04, { damping: 49, stiffness: 230 }, () => {
+                pressScale.set(withSpring(1, { damping: 47, stiffness: 210 }));
               }),
         );
       }
@@ -282,6 +289,7 @@ export const HoldToConfirmButton = forwardRef<
       }
     },
     [
+      duration,
       checkProgress,
       celebration,
       completedOnGesture,
@@ -381,7 +389,7 @@ export const HoldToConfirmButton = forwardRef<
     .onBegin(() => {
       if (currentConfirmed) return;
       pressScale.set(
-        reducedMotion ? 1 : withSpring(0.96, { damping: 15, stiffness: 240 }),
+        reducedMotion ? 1 : withSpring(0.96, { damping: 50, stiffness: 240 }),
       );
       completedOnGesture.set(false);
       holdClock.set(0);
@@ -408,12 +416,12 @@ export const HoldToConfirmButton = forwardRef<
     })
     .onFinalize(() => {
       pressScale.set(
-        reducedMotion ? 1 : withSpring(1, { damping: 13, stiffness: 220 }),
+        reducedMotion ? 1 : withSpring(1, { damping: 48, stiffness: 220 }),
       );
       if (!completedOnGesture.get() && !currentConfirmed) {
         holdClock.set(0);
         progress.set(
-          reducedMotion ? 0 : withSpring(0, { damping: 18, stiffness: 240 }),
+          reducedMotion ? 0 : withSpring(0, { damping: 50, stiffness: 240 }),
         );
       }
     });
@@ -422,29 +430,29 @@ export const HoldToConfirmButton = forwardRef<
   const outerWidth = isRing ? height : width;
 
   const fillStyle = useAnimatedStyle(() => ({
-    transform: [{ scaleX: progress.value }],
+    transform: [{ scaleX: progress.get() }],
   }));
   const controlMotionStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: reducedMotion ? 1 : pressScale.value }],
+    transform: [{ scale: reducedMotion ? 1 : pressScale.get() }],
   }));
   const successGlowStyle = useAnimatedStyle(() => ({
     opacity: reducedMotion
       ? currentConfirmed
         ? 0.22
         : 0
-      : interpolate(celebration.value, [0, 0.18, 1], [0, 0.34, 0]),
+      : interpolate(celebration.get(), [0, 0.18, 1], [0, 0.34, 0]),
     transform: [
-      { scale: interpolate(celebration.value, [0, 1], [0.72, 1.32]) },
+      { scale: interpolate(celebration.get(), [0, 1], [0.72, 1.32]) },
     ],
   }));
   const sheenStyle = useAnimatedStyle(() => ({
     opacity: reducedMotion
       ? 0
-      : interpolate(celebration.value, [0, 0.1, 0.86, 1], [0, 0.7, 0.4, 0]),
+      : interpolate(celebration.get(), [0, 0.1, 0.86, 1], [0, 0.7, 0.4, 0]),
     transform: [
       {
         translateX: interpolate(
-          celebration.value,
+          celebration.get(),
           [0, 1],
           [-outerWidth * 0.7, outerWidth * 0.7],
         ),
@@ -453,11 +461,11 @@ export const HoldToConfirmButton = forwardRef<
     ],
   }));
   const labelStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(checkProgress.value, [0, 0.45], [1, 0]),
+    opacity: interpolate(checkProgress.get(), [0, 0.45], [1, 0]),
   }));
   const doneStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(checkProgress.value, [0.45, 1], [0, 1]),
-    transform: [{ scale: interpolate(checkProgress.value, [0, 1], [0.8, 1]) }],
+    opacity: interpolate(checkProgress.get(), [0.45, 1], [0, 1]),
+    transform: [{ scale: interpolate(checkProgress.get(), [0, 1], [0.8, 1]) }],
   }));
   return (
     <GestureDetector gesture={gesture}>
@@ -466,6 +474,11 @@ export const HoldToConfirmButton = forwardRef<
         accessibilityRole="button"
         accessibilityState={{ disabled: currentConfirmed }}
         onAccessibilityTap={confirmNow}
+        accessible
+        accessibilityActions={[{ name: 'activate', label: 'Activate' }]}
+        onAccessibilityAction={(event) => {
+          if (event.nativeEvent.actionName === 'activate') confirmNow();
+        }}
         onPress={screenReaderEnabled ? confirmNow : undefined}
         style={[
           styles.control,

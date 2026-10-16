@@ -20,6 +20,18 @@ A springy notification counter with a compact bell icon.
 
 ## Props
 
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `fontFamily` | `string` | `undefined` | Font family for component text. Omit to preserve the existing font. |
+| `testID` | `string` | `undefined` | Root ID; `${testID}-increment` identifies the increment button and `${testID}-count` identifies the visible count badge. Suffix IDs are omitted when testID is absent. |
+| `value` | `number` | `undefined` | Controlled count. |
+| `defaultValue` | `number` | `3` | Initial uncontrolled count. |
+| `onChange` | `(count: number) => void` | `undefined` | Called after a count request. |
+| `color` | `string` | `'#6D5DFB'` | Accent color. |
+| `size` | `number` | `42` | Icon size. |
+| `accessibilityLabel` | `string` | `'Notifications'` | Accessible label. |
+| `style` | `StyleProp<ViewStyle>` | `undefined` | Container style. |
+
 `value`, `defaultValue`, `onChange`, `color`, `size`, `accessibilityLabel`, and `style` customize the badge.
 
 ## Compatibility
@@ -29,3 +41,8 @@ Expo SDK 57, React Native 0.86, Reanimated 4.5; iOS, Android, and web unverified
 ## Accessibility
 
 Uses a labeled button and removes the spring motion when reduced motion is enabled.
+
+
+## Customization notes
+
+Movement follows gestures, scroll position, or interruptible spring physics. A global duration is not exposed; reduced-motion fades retain their short fixed timing.

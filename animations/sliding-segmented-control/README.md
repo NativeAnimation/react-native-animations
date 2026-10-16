@@ -44,7 +44,7 @@ npx expo install expo-linear-gradient react-native-gesture-handler react-native-
 | `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Material default appearance. |
 | `glowColor` | `string` | `indicatorColor` | Indicator glow color. |
 | `fontFamily` | `string` | System font | Label font family. |
-| `springDamping` | `number` | `20` | Indicator damping. |
+| `springDamping` | `number` | `24` | Indicator damping. Values below the damping needed for ζ ≥ 0.8 are raised to that minimum. |
 | `springStiffness` | `number` | `260` | Indicator stiffness. |
 | `accessibilityLabel` | `string` | `'Segmented control'` | Group label. |
 | `style` | `StyleProp<ViewStyle>` | — | Outer style. |

@@ -39,7 +39,7 @@ npx expo install expo-linear-gradient react-native-gesture-handler react-native-
 | `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Thumb and material appearance. |
 | `glowColor` | `string` | `onColor` | Active thumb glow color. |
 | `thumbIcon` | `'none' \| 'sun-moon' \| 'check'` | `'none'` | Thumb artwork. |
-| `springDamping` | `number` | `18` | Spring damping. |
+| `springDamping` | `number` | `24` | Spring damping. Values below the damping needed for ζ ≥ 0.8 are raised to that minimum. |
 | `springStiffness` | `number` | `280` | Spring stiffness. |
 | `accessibilityLabel` | `string` | `'Toggle setting'` | Screen-reader label. |
 | `style` | `StyleProp<ViewStyle>` | — | Outer style. |

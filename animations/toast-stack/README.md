@@ -80,16 +80,17 @@ toast.show({
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `children` | `ReactNode` | — | App content rendered beneath the toast layer. |
+| `children` | `ReactNode` | `Required` | App content rendered beneath the toast layer. |
 | `duration` | `number` | `5000` | Default auto-dismiss delay in milliseconds. |
 | `maxVisible` | `number` | `5` | Maximum number of visible toasts. |
-| `fontFamily` | `string` | System | Font for labels and supporting copy. |
-| `titleFontFamily` | `string` | System | Font for titles and actions. |
-| `onDismiss` | `(id: string) => void` | — | Called after a toast is dismissed. |
-| `style` | `StyleProp<ViewStyle>` | — | Outer provider container style. |
-| `hostStyle` | `StyleProp<ViewStyle>` | — | Absolute toast host style. |
-| `expandedContentOffset` | `number` | `344` | Maximum distance app content moves down while the stack is open. |
-| `testID` | `string` | — | Test identifier for the provider. |
+| `fontFamily` | `string` | `undefined` | Font family for labels and supporting text. |
+| `titleFontFamily` | `string` | `undefined` | Font family for toast titles and actions. |
+| `onDismiss` | `(id: string) => void` | `undefined` | Called after a toast is dismissed. |
+| `style` | `StyleProp<ViewStyle>` | `undefined` | Optional style for the outer provider container. |
+| `hostStyle` | `StyleProp<ViewStyle>` | `undefined` | Optional style for the absolute toast host. |
+| `expandedContentOffset` | `number` | `344` | Maximum distance the app content moves down while the stack is open. |
+| `testID` | `string` | `undefined` | Test identifier applied to the outer provider container. |
+| `colors` | `Partial<Record<ToastType, { accent: string; accentSoft: string }>>` | `undefined` | Optional accent and translucent surface colors by toast type. Omit to keep the built-in semantic palette. |
 
 ### `ToastInput`
 

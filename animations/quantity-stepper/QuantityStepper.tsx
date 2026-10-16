@@ -81,18 +81,18 @@ function RollingNumber({
 
   const height = fontSize * 1.35;
   const outgoingStyle = useAnimatedStyle(() => ({
-    opacity: reducedMotion ? 1 - progress.value : 1,
+    opacity: reducedMotion ? 1 - progress.get() : 1,
     transform: [
-      { translateY: reducedMotion ? 0 : -direction * progress.value * height },
+      { translateY: reducedMotion ? 0 : -direction * progress.get() * height },
     ],
   }));
   const incomingStyle = useAnimatedStyle(() => ({
-    opacity: reducedMotion ? progress.value : 1,
+    opacity: reducedMotion ? progress.get() : 1,
     transform: [
       {
         translateY: reducedMotion
           ? 0
-          : direction * (1 - progress.value) * height,
+          : direction * (1 - progress.get()) * height,
       },
     ],
   }));
@@ -239,7 +239,7 @@ export const QuantityStepper = forwardRef<
           ? 1
           : 0
         : withSpring(expanded ? 1 : 0, {
-            damping: 15,
+            damping: 22,
             stiffness: 220,
             mass: 0.8,
           }),
@@ -310,7 +310,7 @@ export const QuantityStepper = forwardRef<
     pressScale.set(
       reducedMotion
         ? 1
-        : withSpring(1, { damping: 14, stiffness: 320, mass: 0.6 }),
+        : withSpring(1, { damping: 23, stiffness: 320, mass: 0.6 }),
     );
   }, [clearHold, pressScale, reducedMotion]);
 
@@ -338,26 +338,26 @@ export const QuantityStepper = forwardRef<
   );
 
   const containerStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pressScale.value }],
-    width: collapsedWidth + (width - collapsedWidth) * expandProgress.value,
+    transform: [{ scale: pressScale.get() }],
+    width: collapsedWidth + (width - collapsedWidth) * expandProgress.get(),
   }));
   const addStyle = useAnimatedStyle(() => ({
-    opacity: 1 - expandProgress.value,
+    opacity: 1 - expandProgress.get(),
   }));
   const controlsStyle = useAnimatedStyle(() => ({
-    opacity: expandProgress.value,
-    transform: [{ scale: 0.9 + 0.1 * expandProgress.value }],
+    opacity: expandProgress.get(),
+    transform: [{ scale: 0.9 + 0.1 * expandProgress.get() }],
   }));
   const burstStyle = useAnimatedStyle(() => ({
     borderColor: effectiveAccent,
-    opacity: expanded ? 0.48 * (1 - expansionBurst.value) : 0,
-    transform: [{ scale: 0.96 + expansionBurst.value * 0.18 }],
+    opacity: expanded ? 0.48 * (1 - expansionBurst.get()) : 0,
+    transform: [{ scale: 0.96 + expansionBurst.get() * 0.18 }],
   }));
   const sheenStyle = useAnimatedStyle(() => ({
-    opacity: expanded ? 0.75 * (1 - expansionBurst.value) : 0,
+    opacity: expanded ? 0.75 * (1 - expansionBurst.get()) : 0,
     transform: [
       {
-        translateX: -height + expansionBurst.value * (width + height * 1.5),
+        translateX: -height + expansionBurst.get() * (width + height * 1.5),
       },
       { rotate: '16deg' },
     ],
@@ -404,6 +404,9 @@ export const QuantityStepper = forwardRef<
       </View>
       <Animated.View
         pointerEvents={expanded ? 'none' : 'auto'}
+        accessibilityElementsHidden={expanded}
+        importantForAccessibility={expanded ? 'no-hide-descendants' : 'auto'}
+        aria-hidden={expanded}
         style={[styles.layer, addStyle]}
       >
         <Pressable
@@ -426,6 +429,9 @@ export const QuantityStepper = forwardRef<
 
       <Animated.View
         pointerEvents={expanded ? 'auto' : 'none'}
+        accessibilityElementsHidden={!expanded}
+        importantForAccessibility={!expanded ? 'no-hide-descendants' : 'auto'}
+        aria-hidden={!expanded}
         style={[styles.layer, styles.controls, controlsStyle]}
       >
         <Pressable

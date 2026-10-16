@@ -67,7 +67,7 @@ export type SlidingSegmentedControlProps = {
   glowColor?: string;
   /** Label font family. @default System font */
   fontFamily?: string;
-  /** Spring damping. @default 20 */
+  /** Spring damping. @default 24 */
   springDamping?: number;
   /** Spring stiffness. @default 260 */
   springStiffness?: number;
@@ -117,7 +117,7 @@ export const SlidingSegmentedControl = forwardRef<
     colorScheme = 'auto',
     glowColor = indicatorColor,
     fontFamily,
-    springDamping = 20,
+    springDamping = 24,
     springStiffness = 260,
     accessibilityLabel = 'Segmented control',
     style,
@@ -181,7 +181,10 @@ export const SlidingSegmentedControl = forwardRef<
         reducedMotion
           ? next
           : withSpring(next, {
-              damping: springDamping,
+              damping: Math.max(
+                springDamping,
+                1.6 * Math.sqrt(springStiffness * 0.8),
+              ),
               stiffness: springStiffness,
               mass: 0.8,
             }),
@@ -287,7 +290,10 @@ export const SlidingSegmentedControl = forwardRef<
             reducedMotion
               ? nearestIndex
               : withSpring(nearestIndex, {
-                  damping: springDamping,
+                  damping: Math.max(
+                    springDamping,
+                    1.6 * Math.sqrt(springStiffness * 0.8),
+                  ),
                   stiffness: springStiffness,
                   mass: 0.8,
                 }),
@@ -306,14 +312,14 @@ export const SlidingSegmentedControl = forwardRef<
   );
 
   const indicatorStyle = useAnimatedStyle(() => {
-    const nearest = Math.round(progress.value);
-    const stretchPhase = Math.abs(progress.value - nearest) * 2;
+    const nearest = Math.round(progress.get());
+    const stretchPhase = Math.abs(progress.get() - nearest) * 2;
     return {
-      width: interpolate(progress.value, animationInputRange, animationWidths),
+      width: interpolate(progress.get(), animationInputRange, animationWidths),
       transform: [
         {
           translateX: interpolate(
-            progress.value,
+            progress.get(),
             animationInputRange,
             animationLefts,
           ),
@@ -321,28 +327,28 @@ export const SlidingSegmentedControl = forwardRef<
         {
           scaleX: reducedMotion
             ? 1
-            : 1 + 0.1 * stretchPhase + selectionPulse.value * 0.025,
+            : 1 + 0.1 * stretchPhase + selectionPulse.get() * 0.025,
         },
-        { scaleY: reducedMotion ? 1 : 1 + selectionPulse.value * 0.055 },
+        { scaleY: reducedMotion ? 1 : 1 + selectionPulse.get() * 0.055 },
       ],
     };
   });
   const activeLabelClipStyle = useAnimatedStyle(() => {
     const indicatorWidth = interpolate(
-      progress.value,
+      progress.get(),
       animationInputRange,
       animationWidths,
     );
     const indicatorLeft = interpolate(
-      progress.value,
+      progress.get(),
       animationInputRange,
       animationLefts,
     );
-    const nearest = Math.round(progress.value);
-    const stretchPhase = Math.abs(progress.value - nearest) * 2;
+    const nearest = Math.round(progress.get());
+    const stretchPhase = Math.abs(progress.get() - nearest) * 2;
     const scaleX = reducedMotion
       ? 1
-      : 1 + 0.1 * stretchPhase + selectionPulse.value * 0.025;
+      : 1 + 0.1 * stretchPhase + selectionPulse.get() * 0.025;
     const visualWidth = indicatorWidth * scaleX;
     const visualLeft = indicatorLeft - (visualWidth - indicatorWidth) / 2;
 
@@ -353,32 +359,32 @@ export const SlidingSegmentedControl = forwardRef<
   });
   const activeLabelRowStyle = useAnimatedStyle(() => {
     const indicatorWidth = interpolate(
-      progress.value,
+      progress.get(),
       animationInputRange,
       animationWidths,
     );
     const indicatorLeft = interpolate(
-      progress.value,
+      progress.get(),
       animationInputRange,
       animationLefts,
     );
-    const nearest = Math.round(progress.value);
-    const stretchPhase = Math.abs(progress.value - nearest) * 2;
+    const nearest = Math.round(progress.get());
+    const stretchPhase = Math.abs(progress.get() - nearest) * 2;
     const scaleX = reducedMotion
       ? 1
-      : 1 + 0.1 * stretchPhase + selectionPulse.value * 0.025;
+      : 1 + 0.1 * stretchPhase + selectionPulse.get() * 0.025;
     const visualWidth = indicatorWidth * scaleX;
     const visualLeft = indicatorLeft - (visualWidth - indicatorWidth) / 2;
 
     return { transform: [{ translateX: -visualLeft }] };
   });
   const trackPressStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: reducedMotion ? 1 : pressScale.value }],
+    transform: [{ scale: reducedMotion ? 1 : pressScale.get() }],
   }));
   const sheenStyle = useAnimatedStyle(() => ({
-    opacity: reducedMotion ? 0 : selectionPulse.value * 0.65,
+    opacity: reducedMotion ? 0 : selectionPulse.get() * 0.65,
     transform: [
-      { translateX: (1 - selectionPulse.value) * 70 - 35 },
+      { translateX: (1 - selectionPulse.get()) * 70 - 35 },
       { rotate: '-18deg' },
     ],
   }));
@@ -457,14 +463,14 @@ export const SlidingSegmentedControl = forwardRef<
               pressScale.set(
                 reducedMotion
                   ? 1
-                  : withSpring(0.96, { damping: 18, stiffness: 320 }),
+                  : withSpring(0.96, { damping: 58, stiffness: 320 }),
               );
             }}
             onPressOut={() => {
               pressScale.set(
                 reducedMotion
                   ? 1
-                  : withSpring(1, { damping: 14, stiffness: 240 }),
+                  : withSpring(1, { damping: 50, stiffness: 240 }),
               );
             }}
             style={[

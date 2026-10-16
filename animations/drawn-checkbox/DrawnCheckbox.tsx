@@ -39,8 +39,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const CHECK_SPRING = { damping: 20, stiffness: 360, mass: 0.8 };
-const PRESS_SPRING = { damping: 24, stiffness: 380, mass: 0.8 };
+const CHECK_SPRING = { damping: 28, stiffness: 360, mass: 0.8 };
+const PRESS_SPRING = { damping: 28, stiffness: 380, mass: 0.8 };
 
 export type DrawnCheckboxColorScheme = 'light' | 'dark' | 'auto';
 
@@ -226,20 +226,20 @@ export const DrawnCheckbox = forwardRef<DrawnCheckboxRef, DrawnCheckboxProps>(
         ),
       [safeRadius, safeSize],
     );
-    const fillRadius = useDerivedValue(() => progress.value * safeSize * 0.72);
+    const fillRadius = useDerivedValue(() => progress.get() * safeSize * 0.72);
     const pressStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: reducedMotion ? 1 : pressScale.value }],
+      transform: [{ scale: reducedMotion ? 1 : pressScale.get() }],
     }));
     const labelAnimatedStyle = useAnimatedStyle(() => ({
-      opacity: interpolate(progress.value, [0, 1], [1, 0.5]),
+      opacity: interpolate(progress.get(), [0, 1], [1, 0.5]),
     }));
     const strikeStyle = useAnimatedStyle(() => ({
-      opacity: progress.value,
-      width: labelWidth.value * progress.value,
+      opacity: progress.get(),
+      width: labelWidth.get() * progress.get(),
     }));
     const haloStyle = useAnimatedStyle(() => ({
-      opacity: reducedMotion ? 0 : 0.34 * (1 - haloProgress.value),
-      transform: [{ scale: 0.8 + haloProgress.value * 0.85 }],
+      opacity: reducedMotion ? 0 : 0.34 * (1 - haloProgress.get()),
+      transform: [{ scale: 0.8 + haloProgress.get() * 0.85 }],
     }));
 
     const handleLabelLayout = useCallback(

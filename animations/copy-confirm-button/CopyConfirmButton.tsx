@@ -1,3 +1,4 @@
+// The blur carries its own radius: a backdrop blur is not clipped to the parent's rounded corners.
 import {
   forwardRef,
   useCallback,
@@ -39,7 +40,7 @@ import Animated, {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const SUCCESS_DURATION = 1400;
-const PRESS_SPRING = { damping: 20, stiffness: 360, mass: 0.7 };
+const PRESS_SPRING = { damping: 26, stiffness: 360, mass: 0.7 };
 
 /** Imperative controls for the copy button. */
 export type CopyConfirmButtonRef = {
@@ -64,6 +65,8 @@ export type CopyConfirmButtonProps = {
   size?: number;
   /** Resting button color. Defaults to a scheme-aware neutral. */
   backgroundColor?: string;
+  /** Ref to a host BlurTargetView behind the confirmation label for Android blur. */
+  blurTarget?: React.RefObject<View | null>;
   /** Bottom surface color kept for API compatibility. */
   surfaceEndColor?: string;
   /** Resting copy icon color. Defaults to a scheme-aware neutral. */
@@ -97,6 +100,7 @@ export const CopyConfirmButton = forwardRef<
     resetMs = SUCCESS_DURATION,
     size = 52,
     backgroundColor,
+    blurTarget,
     surfaceEndColor,
     iconColor,
     successColor = '#6E56FF',
@@ -215,22 +219,22 @@ export const CopyConfirmButton = forwardRef<
   }, [controlled, currentCopied, requestCopied, resetMs]);
 
   const copyOpacity = useDerivedValue(() =>
-    interpolate(progress.value, [0, 0.46, 1], [1, 0, 0]),
+    interpolate(progress.get(), [0, 0.46, 1], [1, 0, 0]),
   );
   const checkOpacity = useDerivedValue(() =>
-    interpolate(progress.value, [0, 0.44, 0.62, 1], [0, 0, 1, 1]),
+    interpolate(progress.get(), [0, 0.44, 0.62, 1], [0, 0, 1, 1]),
   );
   const checkEnd = useDerivedValue(() =>
-    interpolate(progress.value, [0.46, 1], [0, 1]),
+    interpolate(progress.get(), [0.46, 1], [0, 1]),
   );
   const surfaceStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
-      progress.value,
+      progress.get(),
       [0, 1],
       [resolvedSurfaceEnd, successColor],
     ),
     borderColor: interpolateColor(
-      progress.value,
+      progress.get(),
       [0, 1],
       [
         dark ? 'rgba(255,255,255,0.16)' : 'rgba(20,20,35,0.10)',
@@ -239,14 +243,14 @@ export const CopyConfirmButton = forwardRef<
     ),
   }));
   const pressStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: reducedMotion ? 1 : pressScale.value }],
+    transform: [{ scale: reducedMotion ? 1 : pressScale.get() }],
   }));
   const glowStyle = useAnimatedStyle(() => ({
     opacity: reducedMotion
       ? 0
-      : interpolate(feedback.value, [0, 0.08, 0.42, 1], [0, 0.9, 0.32, 0]),
+      : interpolate(feedback.get(), [0, 0.08, 0.42, 1], [0, 0.9, 0.32, 0]),
     transform: [
-      { scale: interpolate(feedback.value, [0, 0.24, 1], [0.72, 1.06, 1.18]) },
+      { scale: interpolate(feedback.get(), [0, 0.24, 1], [0.72, 1.06, 1.18]) },
     ],
   }));
   const labelStyle = useAnimatedStyle(() => ({
@@ -254,17 +258,17 @@ export const CopyConfirmButton = forwardRef<
       ? currentCopied
         ? 1
         : 0
-      : interpolate(feedback.value, [0, 0.09, 0.72, 1], [0, 1, 1, 0]),
+      : interpolate(feedback.get(), [0, 0.09, 0.72, 1], [0, 1, 1, 0]),
     transform: [
       {
         translateY: reducedMotion
           ? 0
-          : interpolate(feedback.value, [0, 0.16, 0.68, 1], [2, 0, -5, -14]),
+          : interpolate(feedback.get(), [0, 0.16, 0.68, 1], [2, 0, -5, -14]),
       },
       {
         scale: reducedMotion
           ? 1
-          : interpolate(feedback.value, [0, 0.16, 1], [0.94, 1, 1]),
+          : interpolate(feedback.get(), [0, 0.16, 1], [0.94, 1, 1]),
       },
     ],
   }));
@@ -369,6 +373,7 @@ export const CopyConfirmButton = forwardRef<
         ]}
       >
         <BlurView
+          blurTarget={blurTarget}
           blurMethod="dimezisBlurViewSdk31Plus"
           intensity={62}
           tint={dark ? 'systemThickMaterialDark' : 'systemThinMaterialLight'}
