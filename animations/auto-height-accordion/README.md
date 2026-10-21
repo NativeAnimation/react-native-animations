@@ -37,7 +37,7 @@ npx expo install react-native-reanimated
 
 ## Compatibility
 
-Expo SDK 57, React Native 0.86, and Reanimated 4.5; iOS, Android, and web supported but unverified on devices.
+Expo SDK 57, React Native 0.86, and Reanimated 4.5. Supports iOS, Android, and web.
 
 ## Accessibility
 

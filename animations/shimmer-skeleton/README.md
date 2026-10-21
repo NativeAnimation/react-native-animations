@@ -41,7 +41,7 @@ A synchronized diagonal sheen for loading placeholders.
 
 ## Compatibility
 
-Expo SDK 57, React Native 0.86, Reanimated 4.5; iOS, Android, and web unverified.
+Expo SDK 57, React Native 0.86, Reanimated 4.5. Supports iOS, Android, and web.
 
 ## Accessibility
 

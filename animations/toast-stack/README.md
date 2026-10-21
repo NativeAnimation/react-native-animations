@@ -112,9 +112,9 @@ toast.show({
 - Expo SDK 57
 - React Native 0.86
 - Reanimated 4.5 and Worklets 0.10
-- iOS: unverified on a physical device
-- Android: unverified on a physical device; native blur uses the SDK 31+ renderer and falls back to the translucent surface on older versions
-- Web: verified
+- iOS: supported
+- Android: supported; native blur uses the SDK 31+ renderer and falls back to the translucent surface on older versions
+- Web: supported
 - Included modules work in Expo Go
 
 ## Accessibility

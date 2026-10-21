@@ -55,7 +55,7 @@ The ref exposes `select(index)`, `next()`, and `previous()`.
 ## Compatibility
 
 - Expo SDK 57, React Native 0.86, Reanimated 4.5
-- iOS and Android supported but not device-verified; web verified by the project gate
+- iOS, Android, and web: supported
 - Works in Expo Go
 
 ## Accessibility

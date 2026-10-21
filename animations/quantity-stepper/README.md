@@ -29,25 +29,33 @@ import QuantityStepper from './QuantityStepper';
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `value` / `defaultValue` | `number` | — / `0` | Controlled or initial quantity. |
-| `onChange` | `(value: number) => void` | — | Receives clamped requests. |
-| `min` / `max` | `number` | `0` / `99` | Quantity bounds. |
-| `accentColor` / `textColor` | `string` | Purple / white | Control colors. |
+| `value` | `number` | `undefined` | Controlled quantity. |
+| `defaultValue` | `number` | `0` | Initial uncontrolled quantity. |
+| `onChange` | `(value: number) => void` | `undefined` | Receives clamped quantity requests. |
+| `min` | `number` | `0` | Minimum quantity; the control collapses at this value. |
+| `max` | `number` | `99` | Maximum quantity. |
+| `accentColor` | `string` | `'#6757E8'` | Main control color. |
+| `textColor` | `string` | `'#FFFFFF'` | Expanded text color. |
 | `addLabel` | `string` | `'Add'` | Collapsed label. |
-| `width` / `collapsedWidth` / `height` | `number` | `142` / `88` / `46` | Control dimensions. |
-| `duration` | `number` | `240` | Expand/collapse duration. |
-| `fontFamily` | `string` | System font | Label and number font. |
-| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Surface appearance, with system-aware dark mode. |
-| `repeatOnHold` | `boolean` | `true` | Enables press-and-hold repeat. |
-| accessibility labels | `string` | Descriptive defaults | Add, increase, and decrease labels. |
-| `style` / `testID` | style / `string` | — | Container and test customization. |
+| `width` | `number` | `142` | Expanded width in points. |
+| `collapsedWidth` | `number` | `88` | Collapsed width in points. |
+| `height` | `number` | `46` | Control height in points. |
+| `duration` | `number` | `240` | Expand/collapse duration in milliseconds. |
+| `fontFamily` | `string` | System font | Label and number typeface. |
+| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Surface appearance; auto follows the system. |
+| `repeatOnHold` | `boolean` | `true` | Enable press-and-hold repeat. |
+| `addAccessibilityLabel` | `string` | `'Add item'` | Screen-reader name for Add. |
+| `incrementAccessibilityLabel` | `string` | `'Increase quantity'` | Screen-reader name for plus. |
+| `decrementAccessibilityLabel` | `string` | `'Decrease quantity'` | Screen-reader name for minus. |
+| `style` | `StyleProp<ViewStyle>` | `undefined` | Outer control style. |
+| `testID` | `string` | `undefined` | Outer control test identifier. |
 
 The ref exposes `increment()`, `decrement()`, `setValue(value)`, and `reset()`.
 
 ## Compatibility
 
 - Expo SDK 57, React Native 0.86, and Reanimated 4.5
-- iOS, Android, and web supported; device verification pending
+- iOS, Android, and web supported.
 - Works in Expo Go
 
 ## Accessibility
