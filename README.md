@@ -69,7 +69,7 @@ that link does not install the skill.
 
 Ask: *"Add a skeleton loader to the feed while it loads."* Public discovery needs no account. To add through MCP,
 run `npx nativeanimation login` yourself; your agent can also use the free source folders without a session.
-Paid pieces cost **$9 each or $149 for the catalog**.
+Paid pieces cost **$9 each or $299 once for All-access (launch price)**.
 
 ## Compatibility
 
