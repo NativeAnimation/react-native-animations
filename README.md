@@ -21,6 +21,17 @@ animations: onboarding screens, carousels, paywalls, loaders, liquid glass tab b
 | [Bump Badge](animations/bump-badge) | <a href="https://nativeanimation.com/animations/bump-badge"><img src="media/bump-badge.gif" width="120" alt="bump badge React Native animation preview"></a> | An animated **notification badge** counter that bumps with a spring when the count changes. |
 | [Auto Height Accordion](animations/auto-height-accordion) | <a href="https://nativeanimation.com/animations/auto-height-accordion"><img src="media/auto-height-accordion.gif" width="120" alt="auto height accordion React Native animation preview"></a> | An **animated accordion** (FAQ / collapsible) that measures and animates to any content height. |
 
+## Make it yours
+
+Each preview shows one way to style the component; your app supplies the content and the design. Every piece is
+delivered as source in your project: start with its documented props to adapt colors, typography, and copy, and edit
+the source when your design needs more than the API exposes. Available controls differ by piece and are listed in each
+README.
+
+For example, restyle [Copy Confirm Button](animations/copy-confirm-button) with `backgroundColor`, `iconColor`,
+`successColor`, `fontFamily`, and `copiedLabel`. For a premium example with your own artwork, fonts, and a full theme,
+see the props of [Meal Scan Nutrition](https://nativeanimation.com/animations/meal-scan-nutrition#props).
+
 ## Install
 
 Each folder is self-contained. Two ways to add one:
