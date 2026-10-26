@@ -31,7 +31,7 @@ npx nativeanimation login
 npx nativeanimation add shimmer-skeleton
 
 # Or by hand: copy animations/<id>/ into your project and install its dependencies
-npx expo install react-native-reanimated expo-linear-gradient
+npx expo install react-native-reanimated react-native-worklets expo-linear-gradient
 ```
 
 Dependencies for each piece are listed in its `piece.json` and README.
