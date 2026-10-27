@@ -6,7 +6,20 @@ import {
 } from 'react-native-reanimated';
 
 export type BaseScheme = 'light' | 'dark';
-export type BaseAccent = 'neutral' | 'blue' | 'green' | 'violet';
+
+/** Named accents in display order; legacy aliases are accepted but not listed. */
+export const baseAccents = [
+  { key: 'quill', name: 'Quill' },
+  { key: 'tide', name: 'Tide' },
+  { key: 'grove', name: 'Grove' },
+  { key: 'bloom', name: 'Bloom' },
+  { key: 'cove', name: 'Cove' },
+  { key: 'kiln', name: 'Kiln' },
+] as const;
+
+export type BaseAccentName = (typeof baseAccents)[number]['key'];
+export type BaseAccent =
+  BaseAccentName | 'neutral' | 'blue' | 'green' | 'violet';
 
 type Curve = readonly [number, number, number, number];
 type CurveName =
@@ -112,15 +125,30 @@ export type BaseTheme = {
   };
 };
 
-// Accent themes only replace primary and ring.
+// Resolve colors without rewriting the caller's accent value in the returned theme.
+const accentNames: Record<BaseAccent, BaseAccentName> = {
+  quill: 'quill',
+  tide: 'tide',
+  grove: 'grove',
+  bloom: 'bloom',
+  cove: 'cove',
+  kiln: 'kiln',
+  neutral: 'quill',
+  blue: 'tide',
+  green: 'grove',
+  violet: 'bloom',
+};
+
+// Accent themes only replace primary, primaryForeground and ring (plus derived ringSoft).
 const accents: Record<
-  BaseAccent,
+  BaseAccentName,
   Record<
     BaseScheme,
     { primary: string; primaryForeground: string; ring: string }
   >
 > = {
-  neutral: {
+  // Preserve the original neutral tokens, including its focus ring.
+  quill: {
     light: {
       primary: '#171717',
       primaryForeground: '#fafafa',
@@ -128,29 +156,45 @@ const accents: Record<
     },
     dark: { primary: '#e5e5e5', primaryForeground: '#171717', ring: '#737373' },
   },
-  blue: {
+  tide: {
     light: {
-      primary: '#155dfc',
-      primaryForeground: '#eff6ff',
-      ring: '#51a2ff',
+      primary: '#0371d0',
+      primaryForeground: '#fafafa',
+      ring: '#132030',
     },
-    dark: { primary: '#155dfc', primaryForeground: '#eff6ff', ring: '#1447e6' },
+    dark: { primary: '#88bffe', primaryForeground: '#171717', ring: '#e9f3ff' },
   },
-  green: {
+  grove: {
     light: {
-      primary: '#008236',
-      primaryForeground: '#f0fdf4',
-      ring: '#05df72',
+      primary: '#417e2f',
+      primaryForeground: '#fafafa',
+      ring: '#172313',
     },
-    dark: { primary: '#00c950', primaryForeground: '#052e16', ring: '#008236' },
+    dark: { primary: '#a8e995', primaryForeground: '#171717', ring: '#e6f8e2' },
   },
-  violet: {
+  bloom: {
     light: {
-      primary: '#7f22fe',
-      primaryForeground: '#f5f3ff',
-      ring: '#a684ff',
+      primary: '#812d9b',
+      primaryForeground: '#fafafa',
+      ring: '#261a2a',
     },
-    dark: { primary: '#7f22fe', primaryForeground: '#f5f3ff', ring: '#7008e7' },
+    dark: { primary: '#c46fe0', primaryForeground: '#171717', ring: '#faecff' },
+  },
+  cove: {
+    light: {
+      primary: '#045d57',
+      primaryForeground: '#fafafa',
+      ring: '#072522',
+    },
+    dark: { primary: '#10c4b8', primaryForeground: '#171717', ring: '#d9faf6' },
+  },
+  kiln: {
+    light: {
+      primary: '#8d4301',
+      primaryForeground: '#fafafa',
+      ring: '#2c1a0f',
+    },
+    dark: { primary: '#fea56e', primaryForeground: '#171717', ring: '#ffeee4' },
   },
 };
 
@@ -168,7 +212,7 @@ export function createBaseTheme({
   scheme = 'light',
   accent = 'neutral',
 }: { scheme?: BaseScheme; accent?: BaseAccent } = {}): BaseTheme {
-  const a = accents[accent][scheme];
+  const a = accents[accentNames[accent]][scheme];
   const surfaces =
     scheme === 'dark'
       ? {
