@@ -1,0 +1,75 @@
+{
+  "id": "base-onboarding-block",
+  "title": "Base Onboarding Block",
+  "component": "BaseOnboardingBlock",
+  "kind": "block",
+  "family": "base",
+  "license": "MIT",
+  "files": [
+    "BaseOnboardingBlock.tsx",
+    "BlockLayout.tsx",
+    "index.ts",
+    "LICENSE"
+  ],
+  "registryDependencies": [
+    "base-alert",
+    "base-button",
+    "base-header",
+    "base-progress",
+    "base-radio-group",
+    "base-skeleton",
+    "base-slider",
+    "base-switch",
+    "base-theme",
+    "base-toggle-group"
+  ],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "screen", "block", "onboarding"],
+  "expoSdk": 57,
+  "dependencies": {
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "onboarding-goal-learn"
+    },
+    "target": {
+      "testID": "onboarding-goal-learn"
+    },
+    "effect": {
+      "before": "Step 1 with no goal selected and Continue disabled",
+      "after": "the Learn goal becomes selected and Continue enables"
+    },
+    "settleMs": 500,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/27/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "onboarding-goal-learn",
+              "selector": {
+                "id": "onboarding-goal-learn"
+              },
+              "rect": [0.0949, 0.5344, 0.8103, 0.0521],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

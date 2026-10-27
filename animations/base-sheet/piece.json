@@ -1,0 +1,59 @@
+{
+  "id": "base-sheet",
+  "title": "Base Sheet",
+  "component": "BaseSheet",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BaseSheet.tsx", "index.ts", "LICENSE"],
+  "registryDependencies": ["base-theme"],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "tags": ["family-base", "minimal", "sheet"],
+  "expoSdk": 57,
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "base-sheet-open"
+    },
+    "target": {
+      "testID": "base-sheet-open"
+    },
+    "effect": {
+      "before": "Sheet closed",
+      "after": "overlay fades in and the Daily reading goal sheet rises from the bottom"
+    },
+    "settleMs": 600,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/25/2026 (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-sheet-open",
+              "selector": {
+                "id": "base-sheet-open"
+              },
+              "rect": [0.1051, 0.3092, 0.3595, 0.0427],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  }
+}

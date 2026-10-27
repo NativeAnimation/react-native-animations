@@ -1,0 +1,28 @@
+{
+  "id": "base-theme",
+  "title": "Native Animation Base Theme",
+  "kind": "support",
+  "family": "base",
+  "license": "MIT",
+  "files": [
+    "theme.ts",
+    "BaseThemeProvider.tsx",
+    "BaseTriggerState.tsx",
+    "useBaseReducedMotion.ts",
+    "baseActivationProps.ts",
+    "index.ts",
+    "LICENSE",
+    "NOTICE.md"
+  ],
+  "registryDependencies": [],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "verified"
+  },
+  "tags": ["family-base", "minimal"],
+  "dependencies": {
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  }
+}

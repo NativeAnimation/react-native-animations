@@ -1,0 +1,79 @@
+{
+  "id": "base-list-detail-block",
+  "title": "Base List Detail Block",
+  "component": "BaseListDetailBlock",
+  "kind": "block",
+  "family": "base",
+  "license": "MIT",
+  "files": [
+    "BaseListDetailBlock.tsx",
+    "BlockLayout.tsx",
+    "index.ts",
+    "LICENSE"
+  ],
+  "registryDependencies": [
+    "base-alert",
+    "base-avatar",
+    "base-badge",
+    "base-button",
+    "base-dialog",
+    "base-empty-state",
+    "base-header",
+    "base-input",
+    "base-list-row",
+    "base-sheet",
+    "base-skeleton",
+    "base-theme",
+    "base-toast",
+    "base-toggle-group"
+  ],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "screen", "block", "list-detail"],
+  "expoSdk": 57,
+  "dependencies": {
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "project-studio"
+    },
+    "target": {
+      "testID": "project-studio"
+    },
+    "effect": {
+      "before": "Project list",
+      "after": "the Studio refresh detail sheet rises from the bottom over a dimming list"
+    },
+    "settleMs": 700,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/27/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "project-studio",
+              "selector": {
+                "id": "project-studio"
+              },
+              "rect": [0.0949, 0.6197, 0.8103, 0.1114],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

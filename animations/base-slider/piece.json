@@ -1,0 +1,59 @@
+{
+  "id": "base-slider",
+  "title": "Base Slider",
+  "component": "BaseSlider",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BaseSlider.tsx", "index.ts", "LICENSE"],
+  "registryDependencies": ["base-theme"],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "slider", "range"],
+  "expoSdk": 57,
+  "dependencies": {
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "swipe",
+      "target": "base-slider-thumb"
+    },
+    "target": {
+      "testID": "base-slider-thumb"
+    },
+    "effect": {
+      "before": "Volume at its current value",
+      "after": "thumb stretches, follows the finger on spring 400/32 and the percent updates per step"
+    },
+    "settleMs": 600,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/26/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-slider-thumb",
+              "selector": {
+                "id": "base-slider-thumb"
+              },
+              "rect": [0.5154, 0.2287, 0.041, 0.019],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

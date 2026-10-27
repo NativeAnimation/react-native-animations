@@ -1,0 +1,59 @@
+{
+  "id": "base-card",
+  "title": "Base Card",
+  "component": "BaseCard",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BaseCard.tsx", "index.ts", "LICENSE"],
+  "registryDependencies": ["base-theme"],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "minimal", "card"],
+  "expoSdk": 57,
+  "dependencies": {
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "base-card"
+    },
+    "target": {
+      "testID": "base-card"
+    },
+    "effect": {
+      "before": "Article card at rest",
+      "after": "card dips to 0.985 on press and springs back"
+    },
+    "settleMs": 400,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/26/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-card",
+              "selector": {
+                "id": "base-card"
+              },
+              "rect": [0.0513, 0.2109, 0.8974, 0.1635],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

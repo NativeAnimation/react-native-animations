@@ -1,6 +1,6 @@
 {
   "name": "nativeanimation",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Choose and add Native Animation components to React Native and Expo apps.",
   "author": { "name": "Native Animation" },
   "homepage": "https://nativeanimation.com",

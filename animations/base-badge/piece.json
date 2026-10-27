@@ -1,0 +1,55 @@
+{
+  "id": "base-badge",
+  "title": "Base Badge",
+  "component": "BaseBadge",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BaseBadge.tsx", "index.ts", "LICENSE"],
+  "registryDependencies": ["base-theme", "base-sliding-number"],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "minimal", "badge"],
+  "expoSdk": 57,
+  "dependencies": {},
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "base-badge"
+    },
+    "target": {
+      "testID": "base-badge"
+    },
+    "effect": {
+      "before": "Unread count at its current value",
+      "after": "count rolls up by one on per-digit springs"
+    },
+    "settleMs": 600,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/26/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-badge",
+              "selector": {
+                "id": "base-badge"
+              },
+              "rect": [0.1051, 0.4704, 0.2198, 0.0261],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

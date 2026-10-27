@@ -1,0 +1,75 @@
+{
+  "id": "base-popover",
+  "title": "Base Popover",
+  "component": "BasePopover",
+  "family": "base",
+  "license": "MIT",
+  "files": [
+    "AnchoredPanel.tsx",
+    "BasePopover.tsx",
+    "BaseTooltip.tsx",
+    "PanelHost.tsx",
+    "PanelHost.web.tsx",
+    "PopoverTrigger.tsx",
+    "index.ts",
+    "react-dom.d.ts",
+    "LICENSE"
+  ],
+  "registryDependencies": [
+    "base-theme",
+    "base-button",
+    "base-input",
+    "base-switch"
+  ],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "minimal", "popover", "tooltip", "overlay"],
+  "expoSdk": 57,
+  "dependencies": {
+    "react-dom": "19.2.3",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "base-popover"
+    },
+    "target": {
+      "testID": "base-popover"
+    },
+    "effect": {
+      "before": "Popover closed",
+      "after": "panel pops from scale 0.8 next to the trigger on spring 400/29; closing fades it in 150 ms"
+    },
+    "settleMs": 700,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/27/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-popover",
+              "selector": {
+                "id": "base-popover"
+              },
+              "rect": [0.1051, 0.5723, 0.247, 0.0521],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

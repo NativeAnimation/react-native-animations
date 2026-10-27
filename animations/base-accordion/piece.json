@@ -1,0 +1,61 @@
+{
+  "id": "base-accordion",
+  "title": "Base Accordion",
+  "component": "BaseAccordion",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BaseAccordion.tsx", "index.ts", "LICENSE"],
+  "registryDependencies": ["base-theme"],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "accordion", "disclosure"],
+  "expoSdk": 57,
+  "dependencies": {
+    "lucide-react-native": "^1.61.0",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-svg": "15.15.4",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "base-accordion-trigger-cancel"
+    },
+    "target": {
+      "testID": "base-accordion-trigger-cancel"
+    },
+    "effect": {
+      "before": "Cancellation question closed",
+      "after": "cancellation answer opens to its measured height in 350 ms and the chevron turns 180 degrees"
+    },
+    "settleMs": 500,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/26/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-accordion-trigger-cancel",
+              "selector": {
+                "id": "base-accordion-trigger-cancel"
+              },
+              "rect": [0.1051, 0.3649, 0.7897, 0.0616],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

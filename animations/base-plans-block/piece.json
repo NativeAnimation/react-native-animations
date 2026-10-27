@@ -1,0 +1,73 @@
+{
+  "id": "base-plans-block",
+  "title": "Base Plans Block",
+  "component": "BasePlansBlock",
+  "kind": "block",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BasePlansBlock.tsx", "BlockLayout.tsx", "index.ts", "LICENSE"],
+  "registryDependencies": [
+    "base-accordion",
+    "base-alert",
+    "base-badge",
+    "base-button",
+    "base-card",
+    "base-empty-state",
+    "base-header",
+    "base-skeleton",
+    "base-sliding-number",
+    "base-tabs",
+    "base-theme"
+  ],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "screen", "block", "plans"],
+  "expoSdk": 57,
+  "dependencies": {
+    "lucide-react-native": "^1.61.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-svg": "15.15.4",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "plans-period-tab-yearly"
+    },
+    "target": {
+      "testID": "plans-period-tab-yearly"
+    },
+    "effect": {
+      "before": "Monthly prices selected",
+      "after": "the period indicator slides to Yearly and the prices swap"
+    },
+    "settleMs": 600,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/27/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "plans-period-tab-yearly",
+              "selector": {
+                "id": "plans-period-tab-yearly"
+              },
+              "rect": [0.5, 0.4301, 0.3974, 0.0521],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "base-typing-text",
+  "title": "Base Typing Text",
+  "component": "BaseTypingText",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BaseTypingText.tsx", "index.ts", "LICENSE"],
+  "registryDependencies": ["base-theme"],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "minimal", "text", "typing"],
+  "expoSdk": 57,
+  "dependencies": {
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "base-typing-text"
+    },
+    "target": {
+      "testID": "base-typing-text"
+    },
+    "effect": {
+      "before": "Search placeholder typing its first phrase",
+      "after": "characters appear one by one every 85 ms, then the phrase deletes and the next one types"
+    },
+    "settleMs": 4000,
+    "notes": "Runs on mount and loops; the tap is a no-op, measure from the page load. Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/27/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-typing-text",
+              "selector": {
+                "id": "base-typing-text"
+              },
+              "rect": [0.2051, 0.2968, 0.6564, 0.0249],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

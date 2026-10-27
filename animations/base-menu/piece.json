@@ -1,0 +1,61 @@
+{
+  "id": "base-menu",
+  "title": "Base Menu",
+  "component": "BaseMenu",
+  "family": "base",
+  "license": "MIT",
+  "files": ["BaseMenu.tsx", "index.ts", "AnchoredPanel.tsx", "LICENSE"],
+  "registryDependencies": ["base-theme"],
+  "platforms": {
+    "ios": "unverified",
+    "android": "unverified",
+    "web": "unverified"
+  },
+  "tags": ["family-base", "minimal", "menu"],
+  "expoSdk": 57,
+  "dependencies": {
+    "lucide-react-native": "^1.61.0",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-svg": "15.15.4",
+    "react-native-worklets": "0.10.1"
+  },
+  "measurement": {
+    "schema": 1,
+    "gesture": {
+      "kind": "tap",
+      "target": "base-menu-trigger"
+    },
+    "target": {
+      "testID": "base-menu-trigger"
+    },
+    "effect": {
+      "before": "Menu closed",
+      "after": "menu fades in and scales from 0.9 to 1 in 220 ms from the trigger corner"
+    },
+    "settleMs": 400,
+    "notes": "Expected geometry at 390x844 with zero host insets, measured in the web demo on 10/26/2026 with scripts/medir-contrato.mjs (not a device observation). Disable autoplay and wait 1 s for fonts before the gesture.",
+    "layout": {
+      "schema": 1,
+      "coordinateSpace": "screen-fractions",
+      "checkpoints": [
+        {
+          "state": "rest",
+          "timeMs": 0,
+          "elements": [
+            {
+              "key": "base-menu-trigger",
+              "selector": {
+                "id": "base-menu-trigger"
+              },
+              "rect": [0.8026, 0.3021, 0.0923, 0.0427],
+              "tolerance": [0.02, 0.02, 0.02, 0.01],
+              "safe": true,
+              "interactive": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
