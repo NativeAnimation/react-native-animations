@@ -56,7 +56,7 @@ npx expo install @shopify/react-native-skia expo-linear-gradient react-native-re
 
 ## Compatibility
 
-Expo SDK 57, React Native 0.86, Reanimated 4.5, and Skia 2.6. Supports iOS, Android, and web. Works in Expo Go.
+Expo SDK 58, React Native 0.88, Reanimated 4.7, and Skia 2.14. Supports iOS, Android, and web. Works in Expo Go.
 
 ## Accessibility
 

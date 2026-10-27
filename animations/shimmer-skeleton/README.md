@@ -38,7 +38,7 @@ A synchronized diagonal loading shimmer with configurable placeholder content, b
 
 ## Compatibility
 
-Expo SDK 57, React Native 0.86, Reanimated 4.5. Supports iOS, Android, and web.
+Expo SDK 58, React Native 0.88, Reanimated 4.7. Supports iOS, Android, and web.
 
 ## Accessibility
 

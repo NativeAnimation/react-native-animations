@@ -97,7 +97,7 @@ The ref exposes `focus()`, `blur()`, and `clear()`.
 
 ## Compatibility
 
-- Expo SDK 57, React Native 0.86, and Reanimated 4.5
+- Expo SDK 58, React Native 0.88, and Reanimated 4.7
 
 - iOS and Android: supported
 - Web: supported

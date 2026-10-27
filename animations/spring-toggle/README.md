@@ -49,7 +49,7 @@ The ref exposes `toggle()` and `setValue(value)`.
 
 ## Compatibility
 
-- Expo SDK 57, React Native 0.86, Reanimated 4.5
+- Expo SDK 58, React Native 0.88, Reanimated 4.7
 - iOS, Android, and web: supported
 - Works in Expo Go
 

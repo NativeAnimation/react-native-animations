@@ -57,7 +57,7 @@ npx expo install expo-linear-gradient react-native-gesture-handler react-native-
 
 ## Compatibility
 
-Expo SDK 57, React Native 0.86, Reanimated 4.5, Gesture Handler 2.32, and Worklets 0.10. Supports iOS, Android, and web. Works in Expo Go.
+Expo SDK 58, React Native 0.88, Reanimated 4.7, Gesture Handler 3.3, and Worklets 0.13. Supports iOS, Android, and web. Works in Expo Go.
 
 ## Accessibility
 

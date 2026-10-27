@@ -40,7 +40,7 @@ npx expo install react-native-reanimated react-native-worklets
 
 ## Compatibility
 
-Expo SDK 57, React Native 0.86, and Reanimated 4.5. Supports iOS, Android, and web.
+Expo SDK 58, React Native 0.88, and Reanimated 4.7. Supports iOS, Android, and web.
 
 ## Accessibility
 

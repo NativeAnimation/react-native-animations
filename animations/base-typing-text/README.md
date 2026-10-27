@@ -58,7 +58,7 @@ Wrap your app in `BaseThemeProvider` (from `base-theme`) to choose light/dark an
 
 ## Compatibility
 
-Expo SDK 57 · React Native 0.86 · Reanimated 4.5 · react-native-worklets 0.10. Targets iOS, Android, and web, in Expo Go and development builds. Part of **Native Animation Base**, a free family sharing one theme. Text wraps naturally inside the space supplied by the parent; it is a standalone text block, not a nested text span. No safe-area padding is applied. Unicode code points stay intact; combined grapheme clusters may appear in more than one step.
+Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13. Targets iOS, Android, and web, in Expo Go and development builds. Part of **Native Animation Base**, a free family sharing one theme. Text wraps naturally inside the space supplied by the parent; it is a standalone text block, not a nested text span. No safe-area padding is applied. Unicode code points stay intact; combined grapheme clusters may appear in more than one step.
 
 ## Accessibility
 

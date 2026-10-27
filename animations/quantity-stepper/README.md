@@ -60,7 +60,7 @@ The ref exposes `increment()`, `decrement()`, `setValue(value)`, and `reset()`.
 
 ## Compatibility
 
-- Expo SDK 57, React Native 0.86, and Reanimated 4.5
+- Expo SDK 58, React Native 0.88, and Reanimated 4.7
 - iOS, Android, and web supported.
 - Works in Expo Go
 

@@ -54,7 +54,7 @@ Wrap your app in `BaseThemeProvider` (from `base-theme`) to choose light/dark an
 
 ## Compatibility
 
-Expo SDK 57 · React Native 0.86 · Reanimated 4.5 · react-native-worklets 0.10. Runs on iOS, Android and web, in Expo Go
+Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13. Runs on iOS, Android and web, in Expo Go
 and in development builds. Part of **Native Animation Base**, a free family that shares one theme: install
 `base-theme` once (the CLI does it for you) and every Base piece picks it up.
 

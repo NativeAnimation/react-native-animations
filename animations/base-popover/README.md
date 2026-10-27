@@ -89,7 +89,7 @@ Wrap your app in `BaseThemeProvider` (from `base-theme`) to choose light/dark an
 
 ## Compatibility
 
-Expo SDK 57 · React Native 0.86 · Reanimated 4.5 · react-native-worklets 0.10. Targets iOS, Android, and web, in Expo Go and development builds. Part of **Native Animation Base**, a free family sharing one theme. Native popovers use transparent modals with a local Gesture Handler root. Native tooltips use a passive overlay to preserve the long press; their ancestors must allow visible overflow. Web tooltips use a platform-specific passive portal. No safe-area padding is applied to the trigger; panels clamp to their available window. Tall popovers scroll internally. Changing window dimensions remeasures the anchor.
+Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13. Targets iOS, Android, and web, in Expo Go and development builds. Part of **Native Animation Base**, a free family sharing one theme. Native popovers use transparent modals with a local Gesture Handler root. Native tooltips use a passive overlay to preserve the long press; their ancestors must allow visible overflow. Web tooltips use a platform-specific passive portal. No safe-area padding is applied to the trigger; panels clamp to their available window. Tall popovers scroll internally. Changing window dimensions remeasures the anchor.
 
 ## Accessibility
 
