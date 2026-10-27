@@ -1,6 +1,6 @@
 # Hold to Confirm Button
 
-A deliberate confirmation control with a dimensional progress surface, tactile press response, and a luminous success finish.
+A hold-to-confirm control with animated progress and a success finish, with configurable labels, width, progress color, and font.
 
 ## How it works
 

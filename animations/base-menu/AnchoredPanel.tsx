@@ -40,7 +40,7 @@ export function useAnchoredPanel(
   controlled?: boolean,
   onOpenChange?: (open: boolean) => void,
 ) {
-  const triggerRef = useRef<View>(null);
+  const triggerRef = useRef<React.ComponentRef<typeof View>>(null);
   const [internal, setInternal] = useState(false);
   const open = controlled ?? internal;
   const changeOpen = useCallback(
@@ -67,7 +67,7 @@ export function AnchoredPanel({
 }: {
   open: boolean;
   onClose: () => void;
-  anchorRef: React.RefObject<View | null>;
+  anchorRef: React.RefObject<React.ComponentRef<typeof View> | null>;
   align?: 'start' | 'end';
   matchWidth?: boolean;
   motion?: 'menu' | 'select';
@@ -83,8 +83,8 @@ export function AnchoredPanel({
   const [anchor, setAnchor] = useState<Rect | null>(null);
   const [origin, setOrigin] = useState<Rect | null>(null);
   const [panelHeight, setPanelHeight] = useState(0);
-  const root = useRef<View>(null);
-  const panel = useRef<View>(null);
+  const root = useRef<React.ComponentRef<typeof View>>(null);
+  const panel = useRef<React.ComponentRef<typeof View>>(null);
   const version = useRef(0);
   const pose = useSharedValue(0);
   const finishExit = useCallback((ticket: number) => {
@@ -247,16 +247,19 @@ export function AnchoredPanel({
               aria-modal
               onAccessibilityEscape={onClose}
               pointerEvents={open && ready ? 'auto' : 'none'}
-              {...(Platform.OS === 'web'
-                ? {
-                    onKeyDown: (event: React.KeyboardEvent) => {
-                      if (event.key === 'Escape') {
-                        event.stopPropagation();
-                        onClose();
-                      }
-                    },
-                  }
-                : {})}
+              {
+                /* RN Web forwards DOM events rather than native event objects. */
+                ...((Platform.OS === 'web'
+                  ? {
+                      onKeyDown: (event: React.KeyboardEvent) => {
+                        if (event.key === 'Escape') {
+                          event.stopPropagation();
+                          onClose();
+                        }
+                      },
+                    }
+                  : {}) as object)
+              }
               style={[
                 {
                   position: 'absolute',

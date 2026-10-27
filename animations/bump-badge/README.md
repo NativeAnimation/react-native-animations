@@ -1,6 +1,6 @@
 # Bump Badge
 
-A springy notification counter with a compact bell icon.
+A notification counter with a spring-driven bump and configurable count, badge color, size, and font.
 
 ## How it works
 
@@ -10,7 +10,7 @@ A springy notification counter with a compact bell icon.
 
 ## Install
 
-`npx expo install react-native-reanimated`
+`npx expo install react-native-reanimated react-native-worklets`
 
 ## Usage
 
@@ -20,17 +20,17 @@ A springy notification counter with a compact bell icon.
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `fontFamily` | `string` | `undefined` | Font family for component text. Omit to preserve the existing font. |
-| `testID` | `string` | `undefined` | Root ID; `${testID}-increment` identifies the increment button and `${testID}-count` identifies the visible count badge. Suffix IDs are omitted when testID is absent. |
-| `value` | `number` | `undefined` | Controlled count. |
-| `defaultValue` | `number` | `3` | Initial uncontrolled count. |
-| `onChange` | `(count: number) => void` | `undefined` | Called after a count request. |
-| `color` | `string` | `'#6D5DFB'` | Accent color. |
-| `size` | `number` | `42` | Icon size. |
-| `accessibilityLabel` | `string` | `'Notifications'` | Accessible label. |
-| `style` | `StyleProp<ViewStyle>` | `undefined` | Container style. |
+| Prop                 | Type                      | Default           | Description                                                                                                                                                            |
+| -------------------- | ------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fontFamily`         | `string`                  | `undefined`       | Font family for component text. Omit to preserve the existing font.                                                                                                    |
+| `testID`             | `string`                  | `undefined`       | Root ID; `${testID}-increment` identifies the increment button and `${testID}-count` identifies the visible count badge. Suffix IDs are omitted when testID is absent. |
+| `value`              | `number`                  | `undefined`       | Controlled count.                                                                                                                                                      |
+| `defaultValue`       | `number`                  | `3`               | Initial uncontrolled count.                                                                                                                                            |
+| `onChange`           | `(count: number) => void` | `undefined`       | Called after a count request.                                                                                                                                          |
+| `color`              | `string`                  | `'#6D5DFB'`       | Accent color.                                                                                                                                                          |
+| `size`               | `number`                  | `42`              | Icon size.                                                                                                                                                             |
+| `accessibilityLabel` | `string`                  | `'Notifications'` | Accessible label.                                                                                                                                                      |
+| `style`              | `StyleProp<ViewStyle>`    | `undefined`       | Container style.                                                                                                                                                       |
 
 `value`, `defaultValue`, `onChange`, `color`, `size`, `accessibilityLabel`, and `style` customize the badge.
 
@@ -41,7 +41,6 @@ Expo SDK 57, React Native 0.86, Reanimated 4.5. Supports iOS, Android, and web.
 ## Accessibility
 
 Uses a labeled button and removes the spring motion when reduced motion is enabled.
-
 
 ## Customization notes
 

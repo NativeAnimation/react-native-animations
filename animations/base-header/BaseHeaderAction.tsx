@@ -68,18 +68,27 @@ export function BaseHeaderAction({
         aria-disabled={disabled}
         hitSlop={Platform.OS === 'android' ? 2 : 0}
 
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: disabled ? -1 : 0,
-              // Gesture Handler activates on key-up; prevent browser scrolling without firing twice.
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
-                  event.preventDefault();
-                }
-              },
-            }
-          : {})}
-        {...baseActivationProps(onPress, disabled)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: disabled ? -1 : 0,
+                // Gesture Handler activates on key-up; prevent browser scrolling without firing twice.
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (
+                    !disabled &&
+                    (event.key === 'Enter' || event.key === ' ')
+                  ) {
+                    event.preventDefault();
+                  }
+                },
+              }
+            : {}) as object)
+        }
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(onPress, disabled) as object)
+        }
         style={[
           {
             width: 44,

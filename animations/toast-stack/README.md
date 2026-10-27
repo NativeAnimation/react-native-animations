@@ -1,6 +1,6 @@
 # Toast Stack
 
-A dark glass notification stack that fans open with depth, glows on arrival, and dismisses with physical swipes.
+A notification stack with depth, arrival glows, and swipe dismissal, with configurable status colors, duration, visible count, and fonts.
 
 ## Why this one
 

@@ -29,10 +29,10 @@
     "web": "unverified"
   },
   "tags": ["family-base", "screen", "block", "onboarding"],
-  "expoSdk": 57,
+  "expoSdk": 58,
   "dependencies": {
-    "react-native-reanimated": "4.5.1",
-    "react-native-worklets": "0.10.1"
+    "react-native-reanimated": "4.7.1",
+    "react-native-worklets": "0.13.0"
   },
   "measurement": {
     "schema": 1,

@@ -95,20 +95,26 @@ export function BaseCard({
         if (onPress && event.nativeEvent.actionName === 'activate') onPress();
         else props.onAccessibilityAction?.(event);
       }}
-      {...(onPress && Platform.OS === 'web'
-        ? {
-            tabIndex: 0,
-            onKeyDown: (event: React.KeyboardEvent) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                onPress();
-              }
-            },
-          }
-        : {})}
-      {...(onPress
-        ? baseActivationProps(onPress, props.accessibilityState?.disabled)
-        : {})}
+      {
+        /* RN Web forwards DOM events rather than native event objects. */
+        ...((onPress && Platform.OS === 'web'
+          ? {
+              tabIndex: 0,
+              onKeyDown: (event: React.KeyboardEvent) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onPress();
+                }
+              },
+            }
+          : {}) as object)
+      }
+      {
+        /* RN Web forwards DOM events rather than native event objects. */
+        ...((onPress
+          ? baseActivationProps(onPress, props.accessibilityState?.disabled)
+          : {}) as object)
+      }
       style={[
         {
           borderRadius: theme.radius.xl,

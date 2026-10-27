@@ -12,7 +12,7 @@
     "web": "verified"
   },
   "tags": ["family-base", "minimal", "checkbox"],
-  "expoSdk": 57,
+  "expoSdk": 58,
   "measurement": {
     "schema": 1,
     "gesture": {
@@ -52,8 +52,8 @@
     }
   },
   "dependencies": {
-    "react-native-gesture-handler": "~2.32.0",
-    "react-native-reanimated": "4.5.1",
-    "react-native-worklets": "0.10.1"
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-reanimated": "4.7.1",
+    "react-native-worklets": "0.13.0"
   }
 }

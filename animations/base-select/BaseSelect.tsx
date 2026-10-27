@@ -147,20 +147,26 @@ export function BaseSelect({
           aria-expanded={expanded}
           aria-disabled={disabled}
 
-          {...(Platform.OS === 'web'
-            ? {
-                tabIndex: disabled ? -1 : 0,
-                onKeyDown: (event: React.KeyboardEvent) => {
-                  if (
-                    ['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)
-                  ) {
-                    event.preventDefault();
-                    if (!disabled) changeOpen(true);
-                  }
-                },
-              }
-            : {})}
-          {...baseActivationProps(toggle, disabled)}
+          {
+            /* RN Web forwards DOM events rather than native event objects. */
+            ...((Platform.OS === 'web'
+              ? {
+                  tabIndex: disabled ? -1 : 0,
+                  onKeyDown: (event: React.KeyboardEvent) => {
+                    if (
+                      ['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)
+                    ) {
+                      event.preventDefault();
+                      if (!disabled) changeOpen(true);
+                    }
+                  },
+                }
+              : {}) as object)
+          }
+          {
+            /* RN Web forwards DOM events rather than native event objects. */
+            ...(baseActivationProps(toggle, disabled) as object)
+          }
           style={[
             NO_WEB_OUTLINE,
             [{ minHeight: 44, paddingVertical: 4 }, pressStyle],
@@ -292,23 +298,29 @@ function Option({
         aria-selected={selected}
         aria-disabled={option.disabled}
 
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: option.disabled ? -1 : 0,
-              onFocus: () => highlight.set(1),
-              onBlur: () => highlight.set(0),
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (
-                  !option.disabled &&
-                  (event.key === 'Enter' || event.key === ' ')
-                ) {
-                  event.preventDefault();
-                  onSelect();
-                }
-              },
-            }
-          : {})}
-        {...baseActivationProps(onSelect, option.disabled)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: option.disabled ? -1 : 0,
+                onFocus: () => highlight.set(1),
+                onBlur: () => highlight.set(0),
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (
+                    !option.disabled &&
+                    (event.key === 'Enter' || event.key === ' ')
+                  ) {
+                    event.preventDefault();
+                    onSelect();
+                  }
+                },
+              }
+            : {}) as object)
+        }
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(onSelect, option.disabled) as object)
+        }
         style={[
           NO_WEB_OUTLINE,
           {

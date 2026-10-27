@@ -1,6 +1,6 @@
 # Copy Confirm Button
 
-A tactile copy action that turns into a drawn check, emits a brief accent glow, and lifts a glass confirmation pill above the control.
+A copy button that draws a check and lifts a confirmation pill, with configurable confirmation text, font, surface color, and success color.
 
 ## How it works
 
@@ -17,7 +17,7 @@ Most copy buttons stop at an icon swap or a detached toast. This version keeps e
 ## Install
 
 ```bash
-npx expo install @shopify/react-native-skia expo-blur expo-linear-gradient react-native-reanimated
+npx expo install @shopify/react-native-skia expo-blur expo-linear-gradient react-native-reanimated react-native-worklets
 ```
 
 ## Usage
@@ -37,30 +37,30 @@ import { CopyConfirmButton } from './CopyConfirmButton';
   copiedLabel="Copied"
   resetMs={1400}
   onCopy={() => Clipboard.setStringAsync(value)}
-/>
+/>;
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `blurTarget` | `React.RefObject<View \| null>` | `undefined` | Android backdrop ref. Wrap host content behind the component in `BlurTargetView` and pass its ref; keep the blur outside that target. |
-| `copied` | `boolean` | — | Controls the confirmation state externally. |
-| `defaultCopied` | `boolean` | `false` | Sets the initial uncontrolled state. |
-| `onCopy` | `() => void` | Required | Performs the application's copy operation. |
-| `onChange` | `(copied: boolean) => void` | — | Receives requested confirmation-state changes. |
-| `resetMs` | `number` | `1400` | Time before uncontrolled feedback resets. |
-| `size` | `number` | `52` | Square button size in points. |
-| `backgroundColor` | `string` | Scheme-aware | Resting button color. |
-| `surfaceEndColor` | `string` | Same as `backgroundColor` | Alternate resting surface color retained for API compatibility. |
-| `iconColor` | `string` | Scheme-aware | Resting copy icon color. |
-| `successColor` | `string` | `'#6E56FF'` | Success surface, dot, and glow color. |
-| `copiedLabel` | `string` | `'Copied'` | Confirmation-pill text. |
-| `fontFamily` | `string` | System font | Confirmation-pill font family. |
-| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Surface and glass treatment. |
-| `accessibilityLabel` | `string` | `'Copy value'` | Screen-reader action label. |
-| `style` | `StyleProp<ViewStyle>` | — | Button-container style. |
-| `testID` | `string` | — | Test identifier. |
+| Prop                 | Type                            | Default                   | Description                                                                                                                           |
+| -------------------- | ------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `blurTarget`         | `React.RefObject<View \| null>` | `undefined`               | Android backdrop ref. Wrap host content behind the component in `BlurTargetView` and pass its ref; keep the blur outside that target. |
+| `copied`             | `boolean`                       | —                         | Controls the confirmation state externally.                                                                                           |
+| `defaultCopied`      | `boolean`                       | `false`                   | Sets the initial uncontrolled state.                                                                                                  |
+| `onCopy`             | `() => void`                    | Required                  | Performs the application's copy operation.                                                                                            |
+| `onChange`           | `(copied: boolean) => void`     | —                         | Receives requested confirmation-state changes.                                                                                        |
+| `resetMs`            | `number`                        | `1400`                    | Time before uncontrolled feedback resets.                                                                                             |
+| `size`               | `number`                        | `52`                      | Square button size in points.                                                                                                         |
+| `backgroundColor`    | `string`                        | Scheme-aware              | Resting button color.                                                                                                                 |
+| `surfaceEndColor`    | `string`                        | Same as `backgroundColor` | Alternate resting surface color retained for API compatibility.                                                                       |
+| `iconColor`          | `string`                        | Scheme-aware              | Resting copy icon color.                                                                                                              |
+| `successColor`       | `string`                        | `'#6E56FF'`               | Success surface, dot, and glow color.                                                                                                 |
+| `copiedLabel`        | `string`                        | `'Copied'`                | Confirmation-pill text.                                                                                                               |
+| `fontFamily`         | `string`                        | System font               | Confirmation-pill font family.                                                                                                        |
+| `colorScheme`        | `'light' \| 'dark' \| 'auto'`   | `'auto'`                  | Surface and glass treatment.                                                                                                          |
+| `accessibilityLabel` | `string`                        | `'Copy value'`            | Screen-reader action label.                                                                                                           |
+| `style`              | `StyleProp<ViewStyle>`          | —                         | Button-container style.                                                                                                               |
+| `testID`             | `string`                        | —                         | Test identifier.                                                                                                                      |
 
 The forwarded ref exposes `copy()` and `reset()` for guided demos and external controls.
 
@@ -73,7 +73,6 @@ Built for Expo SDK 57, React Native 0.86, Reanimated 4.5, and React Native Skia 
 The control exposes a labeled button and a selected confirmation state. The label updates to announce success. With Reduce Motion enabled, the icon and surface crossfade without travel, the glow and text shimmer are removed, and the confirmation pill remains stationary with a 10-point gap above the button.
 
 For Android blur, wrap the backdrop in `BlurTargetView` from `expo-blur`, create its ref with `useRef<View | null>(null)`, and pass that ref as `blurTarget`. The target must cover the blur bounds and exclude the blur itself. Without a target, the existing tint/background remains the fallback. `dimezisBlurViewSdk31Plus` enables blur on Android 12 and newer while keeping the fallback on older Android versions.
-
 
 ## Customization notes
 

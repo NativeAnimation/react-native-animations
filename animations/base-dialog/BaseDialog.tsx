@@ -260,16 +260,19 @@ export function BaseDialog({
               aria-labelledby={title ? titleId : undefined}
               aria-describedby={description ? descriptionId : undefined}
               onAccessibilityEscape={close}
-              {...(Platform.OS === 'web'
-                ? {
-                    onKeyDown: (event: React.KeyboardEvent) => {
-                      if (event.key === 'Escape') {
-                        event.stopPropagation();
-                        close();
-                      }
-                    },
-                  }
-                : {})}
+              {
+                /* RN Web forwards DOM events rather than native event objects. */
+                ...((Platform.OS === 'web'
+                  ? {
+                      onKeyDown: (event: React.KeyboardEvent) => {
+                        if (event.key === 'Escape') {
+                          event.stopPropagation();
+                          close();
+                        }
+                      },
+                    }
+                  : {}) as object)
+              }
               style={[
                 {
                   width: Math.max(0, Math.min(width - 32, 512)),
@@ -366,18 +369,24 @@ export function BaseDialog({
                     accessibilityRole="button"
                     accessibilityLabel={closeLabel}
 
-                    {...(Platform.OS === 'web'
-                      ? {
-                          tabIndex: 0,
-                          onKeyDown: (event: React.KeyboardEvent) => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                              event.preventDefault();
-                              close();
-                            }
-                          },
-                        }
-                      : {})}
-                    {...baseActivationProps(close, false)}
+                    {
+                      /* RN Web forwards DOM events rather than native event objects. */
+                      ...((Platform.OS === 'web'
+                        ? {
+                            tabIndex: 0,
+                            onKeyDown: (event: React.KeyboardEvent) => {
+                              if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                close();
+                              }
+                            },
+                          }
+                        : {}) as object)
+                    }
+                    {
+                      /* RN Web forwards DOM events rather than native event objects. */
+                      ...(baseActivationProps(close, false) as object)
+                    }
                     style={[
                       {
                         position: 'absolute',

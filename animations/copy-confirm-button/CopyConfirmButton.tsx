@@ -66,7 +66,7 @@ export type CopyConfirmButtonProps = {
   /** Resting button color. Defaults to a scheme-aware neutral. */
   backgroundColor?: string;
   /** Ref to a host BlurTargetView behind the confirmation label for Android blur. */
-  blurTarget?: React.RefObject<View | null>;
+  blurTarget?: React.RefObject<React.ComponentRef<typeof View> | null>;
   /** Bottom surface color kept for API compatibility. */
   surfaceEndColor?: string;
   /** Resting copy icon color. Defaults to a scheme-aware neutral. */
@@ -130,7 +130,7 @@ export const CopyConfirmButton = forwardRef<
   const pressScale = useSharedValue(1);
 
   const copyPath = useMemo(() => {
-    const path = Skia.Path.Make();
+    const path = Skia.PathBuilder.Make();
     const unit = measuredSize / 52;
     path.addRRect(
       Skia.RRectXY(
@@ -146,15 +146,15 @@ export const CopyConfirmButton = forwardRef<
         4 * unit,
       ),
     );
-    return path;
+    return path.detach();
   }, [measuredSize]);
   const checkPath = useMemo(() => {
-    const path = Skia.Path.Make();
+    const path = Skia.PathBuilder.Make();
     const unit = measuredSize / 52;
     path.moveTo(15 * unit, 27 * unit);
     path.lineTo(23 * unit, 35 * unit);
     path.lineTo(38 * unit, 18 * unit);
-    return path;
+    return path.detach();
   }, [measuredSize]);
 
   const requestCopied = useCallback(

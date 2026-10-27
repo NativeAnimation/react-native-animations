@@ -400,7 +400,7 @@ function ListScreen({
           </View>
         }
         ListEmptyComponent={
-          loading ? (
+          (loading ? (
             <View
               accessible
               accessibilityLabel={t.loading}
@@ -431,7 +431,7 @@ function ListScreen({
                 ) : undefined
               }
             />
-          )
+          )) as React.ComponentProps<typeof FlatList>['ListEmptyComponent']
         }
         renderItem={({ item: entry, index }) => (
           <BlockSection index={Math.min(index + 1, 5)}>

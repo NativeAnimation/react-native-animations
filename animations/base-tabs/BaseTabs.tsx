@@ -216,7 +216,10 @@ function TabTrigger({
         accessibilityRole="tab"
         accessibilityState={{ selected: active }}
         aria-selected={active}
-        {...baseActivationProps(onPress)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(onPress) as object)
+        }
         style={{
           flex: 1,
           height: Platform.OS === 'android' ? 48 : 44,

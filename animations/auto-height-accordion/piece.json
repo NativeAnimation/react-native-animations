@@ -3,12 +3,15 @@
   "title": "Auto Height Accordion",
   "component": "AutoHeightAccordion",
   "files": ["AutoHeightAccordion.tsx", "index.ts"],
-  "dependencies": { "react-native-reanimated": "4.5.1" },
+  "dependencies": {
+    "react-native-reanimated": "4.7.1",
+    "react-native-worklets": "0.13.0"
+  },
   "platforms": {
     "ios": "unverified",
     "android": "unverified",
     "web": "unverified"
   },
-  "expoSdk": 57,
+  "expoSdk": 58,
   "tags": ["accordion", "faq", "micro", "layout"]
 }

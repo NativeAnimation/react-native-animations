@@ -12,7 +12,7 @@
     "web": "unverified"
   },
   "tags": ["family-base", "minimal", "separator"],
-  "expoSdk": 57,
+  "expoSdk": 58,
   "dependencies": {},
   "measurement": {
     "schema": 1,

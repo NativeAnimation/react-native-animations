@@ -205,17 +205,17 @@ export const DrawnCheckbox = forwardRef<DrawnCheckboxRef, DrawnCheckboxProps>(
     ]);
 
     const checkPath = useMemo(() => {
-      const path = Skia.Path.Make();
+      const path = Skia.PathBuilder.Make();
       path.moveTo(safeSize * 0.24, safeSize * 0.52);
       path.lineTo(safeSize * 0.43, safeSize * 0.7);
       path.lineTo(safeSize * 0.77, safeSize * 0.33);
-      return path;
+      return path.detach();
     }, [safeSize]);
     const dashPath = useMemo(() => {
-      const path = Skia.Path.Make();
+      const path = Skia.PathBuilder.Make();
       path.moveTo(safeSize * 0.27, safeSize * 0.5);
       path.lineTo(safeSize * 0.73, safeSize * 0.5);
-      return path;
+      return path.detach();
     }, [safeSize]);
     const fillClip = useMemo(
       () =>

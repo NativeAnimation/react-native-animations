@@ -87,7 +87,7 @@ export function BaseInput({
   const { colors } = theme;
   const reduced = useBaseReducedMotion();
   const focus = useSharedValue(0);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
   const [internal, setInternal] = useState(defaultValue ?? '');
   const [revealed, setRevealed] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);

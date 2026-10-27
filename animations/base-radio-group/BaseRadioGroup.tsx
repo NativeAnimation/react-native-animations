@@ -128,7 +128,10 @@ export function BaseRadio({
         accessibilityState={{ checked: selected, disabled }}
         aria-checked={selected}
         aria-disabled={disabled}
-        {...baseActivationProps(() => onPress?.(value), disabled)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(() => onPress?.(value), disabled) as object)
+        }
         accessibilityLabel={label}
         style={[
           {

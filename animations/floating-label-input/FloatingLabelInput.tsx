@@ -13,8 +13,6 @@ import {
   View,
   useColorScheme,
   type LayoutChangeEvent,
-  type NativeSyntheticEvent,
-  type NativeTouchEvent,
   type StyleProp,
   type TextInputProps,
   type ViewStyle,
@@ -277,7 +275,7 @@ export const FloatingLabelInput = forwardRef<
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
   const [fieldSize, setFieldSize] = useState({ width: 0, height });
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
   const lastTouchAtRef = useRef(0);
   const reducedMotion = useReducedMotion();
   const text = value === undefined ? internalValue : value;
@@ -396,7 +394,7 @@ export const FloatingLabelInput = forwardRef<
   );
 
   const onTouchStart = useCallback(
-    (event: NativeSyntheticEvent<NativeTouchEvent>) => {
+    (event: Parameters<NonNullable<TextInputProps['onTouchStart']>>[0]) => {
       lastTouchAtRef.current = Date.now();
       startFocusLight(event.nativeEvent.locationX, event.nativeEvent.locationY);
       inputProps?.onTouchStart?.(event);

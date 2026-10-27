@@ -500,26 +500,32 @@ function ToastCard({
           accessibilityHint={expanded ? undefined : expandLabel}
           accessibilityState={{ expanded }}
           aria-expanded={expanded}
-          {...baseActivationProps(onExpand)}
+          {
+            /* RN Web forwards DOM events rather than native event objects. */
+            ...(baseActivationProps(onExpand) as object)
+          }
           accessibilityActions={actions}
           onAccessibilityAction={(event) => {
             if (event.nativeEvent.actionName === 'dismiss') dismiss();
             else if (event.nativeEvent.actionName === 'activate') onExpand();
           }}
 
-          {...(Platform.OS === 'web'
-            ? {
-                tabIndex: 0,
-                onKeyDown: (event: React.KeyboardEvent) => {
-                  if (event.key === 'Escape' || event.key === 'Delete')
-                    dismiss();
-                  else if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    onExpand();
-                  }
-                },
-              }
-            : {})}
+          {
+            /* RN Web forwards DOM events rather than native event objects. */
+            ...((Platform.OS === 'web'
+              ? {
+                  tabIndex: 0,
+                  onKeyDown: (event: React.KeyboardEvent) => {
+                    if (event.key === 'Escape' || event.key === 'Delete')
+                      dismiss();
+                    else if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      onExpand();
+                    }
+                  },
+                }
+              : {}) as object)
+          }
         >
           {entry.variant === 'success' ? (
             <Check size={16} color={theme.colors.foreground} />

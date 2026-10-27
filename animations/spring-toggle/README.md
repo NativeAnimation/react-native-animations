@@ -1,6 +1,6 @@
 # Spring Toggle
 
-A draggable, light-reactive switch whose thumb stretches, glows, and settles with a spring.
+A draggable toggle with a stretching, spring-driven thumb, with configurable size, off color, glow color, and thumb icon.
 
 ## How it works
 

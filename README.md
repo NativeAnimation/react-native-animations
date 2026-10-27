@@ -146,8 +146,10 @@ Paid pieces cost **$9 each or $299 once for All-access (launch price)**.
 
 ## Compatibility
 
-Built for **Expo SDK 57**, React Native 0.86, Reanimated 4.5 and react-native-worklets 0.10. Every animation runs on
+Built for **Expo SDK 58**, React Native 0.88, Reanimated 4.7 and react-native-worklets 0.13. Every animation runs on
 the UI thread from a single shared value, so gestures stay interruptible and there is no React state per frame.
+For an Expo SDK 57 project, use the [`sdk-57`](https://github.com/NativeAnimation/react-native-animations/tree/sdk-57)
+tag, or let `npx nativeanimation add` pick the right version for your project.
 
 ## More animations
 

@@ -78,14 +78,18 @@ export function BaseHighlightText({
   const reduced = useBaseReducedMotion();
   const progress = useSharedValue(reduced ? 1 : 0);
   const [lines, setLines] = useState<TextLine[]>([]);
-  const label = useRef<Text>(null);
+  const label = useRef<React.ComponentRef<typeof Text>>(null);
   const updateLines = useCallback((next: TextLine[]) => {
     setLines((previous) =>
       JSON.stringify(previous) === JSON.stringify(next) ? previous : next,
     );
   }, []);
   useLayoutEffect(
-    () => observeTextLines(label.current, updateLines),
+    () =>
+      observeTextLines(
+        label.current as unknown as Parameters<typeof observeTextLines>[0],
+        updateLines,
+      ),
     [text, style, updateLines],
   );
   useEffect(() => {

@@ -191,23 +191,29 @@ function ToggleControl({
         aria-checked={active}
 
         hitSlop={0}
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: disabled ? -1 : 0,
-              'aria-pressed': radio ? undefined : active,
-              'aria-checked': radio ? active : undefined,
-              'aria-disabled': disabled,
-              onFocus: () => setFocused(true),
-              onBlur: () => setFocused(false),
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  activate();
-                }
-              },
-            }
-          : {})}
-        {...baseActivationProps(activate, disabled)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: disabled ? -1 : 0,
+                'aria-pressed': radio ? undefined : active,
+                'aria-checked': radio ? active : undefined,
+                'aria-disabled': disabled,
+                onFocus: () => setFocused(true),
+                onBlur: () => setFocused(false),
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    activate();
+                  }
+                },
+              }
+            : {}) as object)
+        }
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(activate, disabled) as object)
+        }
         style={[
           {
             minWidth: TARGET,

@@ -1,6 +1,6 @@
 # Burst Like Button
 
-A tactile Skia heart with a spring explosion, physical particles, a rolling count, and a hold-to-charge super-like.
+A like button with a particle burst and hold-to-charge effect, with configurable heart color, particle colors, size, and font.
 
 ## How it works
 
@@ -33,26 +33,26 @@ npx expo install @shopify/react-native-skia expo-linear-gradient react-native-re
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `liked` | `boolean` | — | Controlled like state. |
-| `defaultLiked` | `boolean` | `false` | Initial uncontrolled state. |
-| `onChange` | `(liked: boolean) => void` | — | Receives state requests. |
-| `size` | `number` | `28` | Heart size. |
-| `color` | `string` | `'#FF3F68'` | Active heart and wave color. |
-| `particleColors` | `readonly string[]` | Coral gradient palette | Dot and mini-heart palette. |
-| `burstDuration` | `number` | `680` | Wave and particle duration in milliseconds. |
-| `superLikeDuration` | `number` | `720` | Hold duration before the super-like activates. |
-| `count` | `number` | — | Base count before the local like. |
-| `showCount` | `boolean` | When count exists | Shows the rolling count. |
-| `inactiveColor` | `string` | `'#686573'` | Inactive outline color. |
-| `accessibilityLabel` | `string` | `'Like this post'` | Screen-reader label. |
-| `fontFamily` | `string` | System font | Count font. |
-| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Surface color treatment. |
-| `surfaceColor` | `string` | Scheme-aware | Top surface color. |
-| `surfaceEndColor` | `string` | Scheme-aware | Bottom surface color. |
-| `style` | `StyleProp<ViewStyle>` | — | Outer style. |
-| `testID` | `string` | — | Test identifier. |
+| Prop                 | Type                          | Default                | Description                                    |
+| -------------------- | ----------------------------- | ---------------------- | ---------------------------------------------- |
+| `liked`              | `boolean`                     | —                      | Controlled like state.                         |
+| `defaultLiked`       | `boolean`                     | `false`                | Initial uncontrolled state.                    |
+| `onChange`           | `(liked: boolean) => void`    | —                      | Receives state requests.                       |
+| `size`               | `number`                      | `28`                   | Heart size.                                    |
+| `color`              | `string`                      | `'#FF3F68'`            | Active heart and wave color.                   |
+| `particleColors`     | `readonly string[]`           | Coral gradient palette | Dot and mini-heart palette.                    |
+| `burstDuration`      | `number`                      | `680`                  | Wave and particle duration in milliseconds.    |
+| `superLikeDuration`  | `number`                      | `720`                  | Hold duration before the super-like activates. |
+| `count`              | `number`                      | —                      | Base count before the local like.              |
+| `showCount`          | `boolean`                     | When count exists      | Shows the rolling count.                       |
+| `inactiveColor`      | `string`                      | `'#686573'`            | Inactive outline color.                        |
+| `accessibilityLabel` | `string`                      | `'Like this post'`     | Screen-reader label.                           |
+| `fontFamily`         | `string`                      | System font            | Count font.                                    |
+| `colorScheme`        | `'light' \| 'dark' \| 'auto'` | `'auto'`               | Surface color treatment.                       |
+| `surfaceColor`       | `string`                      | Scheme-aware           | Top surface color.                             |
+| `surfaceEndColor`    | `string`                      | Scheme-aware           | Bottom surface color.                          |
+| `style`              | `StyleProp<ViewStyle>`        | —                      | Outer style.                                   |
+| `testID`             | `string`                      | —                      | Test identifier.                               |
 
 ## Compatibility
 

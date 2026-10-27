@@ -174,7 +174,7 @@ export function BaseInputOTP({
   const theme = useBaseTheme(override);
   const { colors } = theme;
   const reduced = useBaseReducedMotion();
-  const inputRef = useRef<TextInputType>(null);
+  const inputRef = useRef<React.ComponentRef<typeof TextInputType>>(null);
   const normalizedGroups = useMemo(() => {
     const source = groups?.length ? groups : [length];
     const clean = source
@@ -329,10 +329,13 @@ export function BaseInputOTP({
         accessibilityState={{ disabled }}
         aria-disabled={disabled}
         accessibilityValue={{ text: digits }}
-        {...baseActivationProps(
-          () => setFocusRequest(focusRequest + 1),
-          disabled,
-        )}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(
+            () => setFocusRequest(focusRequest + 1),
+            disabled,
+          ) as object)
+        }
         style={[
           { width: totalWidth, minHeight: 44, justifyContent: 'center' },
           style,

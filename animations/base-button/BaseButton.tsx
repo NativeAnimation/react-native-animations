@@ -196,7 +196,10 @@ export function BaseButton({
           : {})}
         aria-disabled={inactive}
         aria-busy={loading}
-        {...baseActivationProps(() => onPress?.(), inactive)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(() => onPress?.(), inactive) as object)
+        }
         style={[
           {
             minHeight: Platform.OS === 'android' ? 48 : 44,

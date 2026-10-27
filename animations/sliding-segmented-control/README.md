@@ -1,6 +1,6 @@
 # Sliding Segmented Control
 
-A measured segmented control with a spring indicator, layered light, and a quick selection sweep.
+A segmented control with a spring-driven highlight and light sweep, with configurable segments, indicator color, height, and font.
 
 ## How it works
 

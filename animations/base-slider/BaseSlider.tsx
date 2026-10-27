@@ -268,31 +268,34 @@ export function BaseSlider({
         aria-valuemin={min}
         aria-valuemax={max}
         aria-valuenow={values[0]}
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: disabled ? -1 : 0,
-              onKeyDownCapture: (event: React.KeyboardEvent) => {
-                if (
-                  [
-                    'ArrowRight',
-                    'ArrowUp',
-                    'ArrowLeft',
-                    'ArrowDown',
-                    'Enter',
-                    ' ',
-                  ].includes(event.key)
-                ) {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  adjust(
-                    event.key === 'ArrowLeft' || event.key === 'ArrowDown'
-                      ? -1
-                      : 1,
-                  );
-                }
-              },
-            }
-          : {})}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: disabled ? -1 : 0,
+                onKeyDownCapture: (event: React.KeyboardEvent) => {
+                  if (
+                    [
+                      'ArrowRight',
+                      'ArrowUp',
+                      'ArrowLeft',
+                      'ArrowDown',
+                      'Enter',
+                      ' ',
+                    ].includes(event.key)
+                  ) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    adjust(
+                      event.key === 'ArrowLeft' || event.key === 'ArrowDown'
+                        ? -1
+                        : 1,
+                    );
+                  }
+                },
+              }
+            : {}) as object)
+        }
         accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
         onAccessibilityAction={onAccessibilityAction}
         onLayout={onLayout}

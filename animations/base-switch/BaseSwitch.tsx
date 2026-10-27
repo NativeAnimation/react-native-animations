@@ -116,7 +116,10 @@ export function BaseSwitch({
         accessibilityState={{ checked, disabled }}
         aria-checked={checked}
         aria-disabled={disabled}
-        {...baseActivationProps(toggle, disabled)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(toggle, disabled) as object)
+        }
         style={{
           width: Platform.OS === 'android' ? 48 : 44,
           height: Platform.OS === 'android' ? 48 : 44,

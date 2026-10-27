@@ -256,18 +256,24 @@ function Tab({
         accessibilityState={{ selected }}
         aria-selected={selected}
 
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: 0,
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  onSelect();
-                }
-              },
-            }
-          : {})}
-        {...baseActivationProps(onSelect, false)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: 0,
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onSelect();
+                  }
+                },
+              }
+            : {}) as object)
+        }
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(onSelect, false) as object)
+        }
         style={[
           NO_WEB_OUTLINE,
           [

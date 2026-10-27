@@ -243,18 +243,24 @@ export function BaseAlert({
                 accessibilityLabel={dismissLabel}
                 hitSlop={Platform.OS === 'android' ? 2 : 0}
 
-                {...(Platform.OS === 'web'
-                  ? {
-                      tabIndex: closing ? -1 : 0,
-                      // Gesture Handler activates on key-up; prevent browser scrolling without firing twice.
-                      onKeyDown: (event: React.KeyboardEvent) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault();
-                        }
-                      },
-                    }
-                  : {})}
-                {...baseActivationProps(requestDismiss, closing)}
+                {
+                  /* RN Web forwards DOM events rather than native event objects. */
+                  ...((Platform.OS === 'web'
+                    ? {
+                        tabIndex: closing ? -1 : 0,
+                        // Gesture Handler activates on key-up; prevent browser scrolling without firing twice.
+                        onKeyDown: (event: React.KeyboardEvent) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                          }
+                        },
+                      }
+                    : {}) as object)
+                }
+                {
+                  /* RN Web forwards DOM events rather than native event objects. */
+                  ...(baseActivationProps(requestDismiss, closing) as object)
+                }
                 style={[
                   {
                     width: 44,

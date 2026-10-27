@@ -197,7 +197,7 @@ function ToastCard({
   toggleExpanded,
 }: {
   colors?: ToastProviderProps['colors'];
-  blurTarget: React.RefObject<View | null>;
+  blurTarget: React.RefObject<React.ComponentRef<typeof View> | null>;
   expandedProgress: SharedValue<number>;
   fontFamily?: string;
   index: number;
@@ -540,7 +540,7 @@ export const ToastProvider = forwardRef<ToastProviderRef, ToastProviderProps>(
     const [expanded, setExpanded] = useState(false);
     const [stackWidth, setStackWidth] = useState(320);
     const expandedProgress = useSharedValue(0);
-    const blurTarget = useRef<View>(null);
+    const blurTarget = useRef<React.ComponentRef<typeof View>>(null);
     const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
     const onDismissRef = useRef(onDismiss);
 

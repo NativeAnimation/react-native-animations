@@ -1,6 +1,6 @@
 # Drawn Checkbox
 
-A tactile 24-point checkbox with a center-out spring fill, a hand-drawn mark, and an animated label strike-through.
+A checkbox with a drawn mark and animated label strike-through, with configurable label, font, fill color, and size.
 
 ## How it works
 
@@ -17,7 +17,7 @@ Most checkbox demos stop at the box. This one treats the full task row as a coor
 ## Install
 
 ```bash
-npx expo install @shopify/react-native-skia expo-linear-gradient react-native-reanimated
+npx expo install @shopify/react-native-skia expo-linear-gradient react-native-reanimated react-native-worklets
 ```
 
 For web, follow Expo's Skia CanvasKit setup if your bundler does not already copy the WASM asset.
@@ -34,27 +34,27 @@ For web, follow Expo's Skia CanvasKit setup if your bundler does not already cop
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `checked` | `boolean` | — | Controlled checked state. |
-| `defaultChecked` | `boolean` | `false` | Initial uncontrolled state. |
-| `indeterminate` | `boolean` | `false` | Shows a mixed-state dash. |
-| `onChange` | `(checked: boolean) => void` | — | Receives requested state. |
-| `label` | `string` | — | Pressable label. |
-| `size` | `number` | `24` | Box size. |
-| `radius` | `number` | `7` | Corner radius. |
-| `color` | `string` | `'#6E56FF'` | Active color. |
-| `borderColor` | `string` | `'#B8B5C4'` | Inactive border color. |
-| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Material and default-label appearance. |
-| `glowColor` | `string` | `color` | Completion halo color. |
-| `markColor` | `string` | `'#FFFFFF'` | Check or dash color. |
-| `duration` | `number` | `240` | Drawing duration in milliseconds. |
-| `labelColor` | `string` | Theme contrast color | Explicit label color. |
-| `fontFamily` | `string` | System font | Label font family. |
-| `accessibilityLabel` | `string` | Label or `'Checkbox'` | Screen-reader label. |
-| `style` | `StyleProp<ViewStyle>` | — | Outer style. |
-| `labelStyle` | `StyleProp<TextStyle>` | — | Label style. |
-| `testID` | `string` | — | Test identifier. |
+| Prop                 | Type                          | Default               | Description                            |
+| -------------------- | ----------------------------- | --------------------- | -------------------------------------- |
+| `checked`            | `boolean`                     | —                     | Controlled checked state.              |
+| `defaultChecked`     | `boolean`                     | `false`               | Initial uncontrolled state.            |
+| `indeterminate`      | `boolean`                     | `false`               | Shows a mixed-state dash.              |
+| `onChange`           | `(checked: boolean) => void`  | —                     | Receives requested state.              |
+| `label`              | `string`                      | —                     | Pressable label.                       |
+| `size`               | `number`                      | `24`                  | Box size.                              |
+| `radius`             | `number`                      | `7`                   | Corner radius.                         |
+| `color`              | `string`                      | `'#6E56FF'`           | Active color.                          |
+| `borderColor`        | `string`                      | `'#B8B5C4'`           | Inactive border color.                 |
+| `colorScheme`        | `'light' \| 'dark' \| 'auto'` | `'auto'`              | Material and default-label appearance. |
+| `glowColor`          | `string`                      | `color`               | Completion halo color.                 |
+| `markColor`          | `string`                      | `'#FFFFFF'`           | Check or dash color.                   |
+| `duration`           | `number`                      | `240`                 | Drawing duration in milliseconds.      |
+| `labelColor`         | `string`                      | Theme contrast color  | Explicit label color.                  |
+| `fontFamily`         | `string`                      | System font           | Label font family.                     |
+| `accessibilityLabel` | `string`                      | Label or `'Checkbox'` | Screen-reader label.                   |
+| `style`              | `StyleProp<ViewStyle>`        | —                     | Outer style.                           |
+| `labelStyle`         | `StyleProp<TextStyle>`        | —                     | Label style.                           |
+| `testID`             | `string`                      | —                     | Test identifier.                       |
 
 The ref exposes `toggle()` and `setChecked(checked)`.
 

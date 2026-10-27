@@ -387,23 +387,27 @@ function GroupAvatar({
         }}
         onFocus={() => setActive(avatar.key)}
         onBlur={() => setActive(null)}
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: 0,
-              onClick: (event: React.MouseEvent) => {
-                if (event.detail === 0) setActive(active ? null : avatar.key);
-              },
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  setActive(avatar.key);
-                }
-              },
-              onKeyUp: (event: React.KeyboardEvent) => {
-                if (event.key === 'Enter' || event.key === ' ') setActive(null);
-              },
-            }
-          : {})}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: 0,
+                onClick: (event: React.MouseEvent) => {
+                  if (event.detail === 0) setActive(active ? null : avatar.key);
+                },
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setActive(avatar.key);
+                  }
+                },
+                onKeyUp: (event: React.KeyboardEvent) => {
+                  if (event.key === 'Enter' || event.key === ' ')
+                    setActive(null);
+                },
+              }
+            : {}) as object)
+        }
         hitSlop={{
           left: Math.max(0, (44 - diameter) / 2),
           right: Math.max(0, (44 - diameter) / 2),

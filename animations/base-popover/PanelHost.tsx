@@ -11,7 +11,7 @@ function TooltipHost({
   children,
   onShow,
 }: Pick<PanelHostProps, 'children' | 'onShow'>) {
-  const marker = useRef<View>(null);
+  const marker = useRef<React.ComponentRef<typeof View>>(null);
   const [origin, setOrigin] = useState({ x: 0, y: 0 });
   const { width, height } = useWindowDimensions();
   const measure = useCallback(() => {

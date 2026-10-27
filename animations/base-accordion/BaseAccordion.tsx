@@ -133,7 +133,10 @@ function AccordionItem({
           accessibilityState={{ expanded: open }}
           aria-expanded={open}
           accessibilityLabel={item.title}
-          {...baseActivationProps(onToggle)}
+          {
+            /* RN Web forwards DOM events rather than native event objects. */
+            ...(baseActivationProps(onToggle) as object)
+          }
           style={{
             minHeight: 44,
             paddingVertical: 16,

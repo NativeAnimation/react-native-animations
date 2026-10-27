@@ -42,7 +42,7 @@ export function useAnchoredPanel(
   controlled?: boolean,
   onOpenChange?: (open: boolean) => void,
 ) {
-  const triggerRef = useRef<View>(null);
+  const triggerRef = useRef<React.ComponentRef<typeof View>>(null);
   const [internal, setInternal] = useState(false);
   const open = controlled ?? internal;
   const changeOpen = useCallback(
@@ -71,7 +71,7 @@ export function AnchoredPanel({
 }: {
   open: boolean;
   onClose: () => void;
-  anchorRef: React.RefObject<View | null>;
+  anchorRef: React.RefObject<React.ComponentRef<typeof View> | View | null>;
   side?: 'top' | 'bottom';
   align?: 'start' | 'center' | 'end';
   sideOffset?: number;
@@ -89,8 +89,8 @@ export function AnchoredPanel({
   const [anchor, setAnchor] = useState<Rect | null>(null);
   const [origin, setOrigin] = useState<Rect | null>(null);
   const [panelHeight, setPanelHeight] = useState(0);
-  const root = useRef<View>(null);
-  const panel = useRef<View>(null);
+  const root = useRef<React.ComponentRef<typeof View>>(null);
+  const panel = useRef<React.ComponentRef<typeof View>>(null);
   const measureOrigin = useCallback(() => {
     root.current?.measureInWindow((x, y, width, height) => {
       setOrigin((previous) =>
@@ -116,7 +116,9 @@ export function AnchoredPanel({
   useLayoutEffect(() => {
     if (!open) return;
     let current = true;
-    anchorRef.current?.measureInWindow((x, y, w, h) => {
+    (
+      anchorRef.current as React.ComponentRef<typeof View> | null
+    )?.measureInWindow((x, y, w, h) => {
       if (current) setAnchor({ x, y, width: w, height: h });
     });
     return () => {
@@ -256,47 +258,50 @@ export function AnchoredPanel({
               aria-modal={!tooltip}
               onAccessibilityEscape={onClose}
               pointerEvents={open && ready ? 'auto' : 'none'}
-              {...(Platform.OS === 'web'
-                ? {
-                    onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => {
-                      if (!tooltip && event.key === 'Tab') {
-                        const candidates = Array.from(
-                          event.currentTarget.querySelectorAll<HTMLElement>(
-                            'input, textarea, button, select, a[href], [tabindex]',
-                          ),
-                        ).filter(
-                          (node) =>
-                            node.tabIndex >= 0 &&
-                            !node.hasAttribute('disabled'),
-                        );
-                        const first = candidates[0];
-                        const last = candidates[candidates.length - 1];
-                        if (!first) {
-                          event.preventDefault();
-                          panel.current?.focus();
-                        } else if (
-                          event.shiftKey &&
-                          (document.activeElement === first ||
-                            document.activeElement === event.currentTarget)
-                        ) {
-                          event.preventDefault();
-                          last.focus();
-                        } else if (
-                          !event.shiftKey &&
-                          (document.activeElement === last ||
-                            document.activeElement === event.currentTarget)
-                        ) {
-                          event.preventDefault();
-                          first.focus();
+              {
+                /* RN Web forwards DOM events rather than native event objects. */
+                ...((Platform.OS === 'web'
+                  ? {
+                      onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => {
+                        if (!tooltip && event.key === 'Tab') {
+                          const candidates = Array.from(
+                            event.currentTarget.querySelectorAll<HTMLElement>(
+                              'input, textarea, button, select, a[href], [tabindex]',
+                            ),
+                          ).filter(
+                            (node) =>
+                              node.tabIndex >= 0 &&
+                              !node.hasAttribute('disabled'),
+                          );
+                          const first = candidates[0];
+                          const last = candidates[candidates.length - 1];
+                          if (!first) {
+                            event.preventDefault();
+                            panel.current?.focus();
+                          } else if (
+                            event.shiftKey &&
+                            (document.activeElement === first ||
+                              document.activeElement === event.currentTarget)
+                          ) {
+                            event.preventDefault();
+                            last.focus();
+                          } else if (
+                            !event.shiftKey &&
+                            (document.activeElement === last ||
+                              document.activeElement === event.currentTarget)
+                          ) {
+                            event.preventDefault();
+                            first.focus();
+                          }
                         }
-                      }
-                      if (event.key === 'Escape') {
-                        event.stopPropagation();
-                        onClose();
-                      }
-                    },
-                  }
-                : {})}
+                        if (event.key === 'Escape') {
+                          event.stopPropagation();
+                          onClose();
+                        }
+                      },
+                    }
+                  : {}) as object)
+              }
               style={[
                 {
                   position: 'absolute',

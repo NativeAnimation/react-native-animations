@@ -215,35 +215,41 @@ function MenuRow({
         }
         aria-disabled={item.disabled}
 
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: item.disabled ? -1 : 0,
-              onFocus: () =>
-                highlight.set(
-                  withTiming(1, {
-                    reduceMotion: ReduceMotion.Never,
-                    duration: reduced ? 0 : 100,
-                  }),
-                ),
-              onBlur: () =>
-                highlight.set(
-                  withTiming(0, {
-                    reduceMotion: ReduceMotion.Never,
-                    duration: reduced ? 0 : 100,
-                  }),
-                ),
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (
-                  !item.disabled &&
-                  (event.key === 'Enter' || event.key === ' ')
-                ) {
-                  event.preventDefault();
-                  onSelect();
-                }
-              },
-            }
-          : {})}
-        {...baseActivationProps(onSelect, item.disabled)}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: item.disabled ? -1 : 0,
+                onFocus: () =>
+                  highlight.set(
+                    withTiming(1, {
+                      reduceMotion: ReduceMotion.Never,
+                      duration: reduced ? 0 : 100,
+                    }),
+                  ),
+                onBlur: () =>
+                  highlight.set(
+                    withTiming(0, {
+                      reduceMotion: ReduceMotion.Never,
+                      duration: reduced ? 0 : 100,
+                    }),
+                  ),
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (
+                    !item.disabled &&
+                    (event.key === 'Enter' || event.key === ' ')
+                  ) {
+                    event.preventDefault();
+                    onSelect();
+                  }
+                },
+              }
+            : {}) as object)
+        }
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(onSelect, item.disabled) as object)
+        }
         style={[
           NO_WEB_OUTLINE,
           [

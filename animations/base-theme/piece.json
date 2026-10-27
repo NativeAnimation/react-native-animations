@@ -22,7 +22,7 @@
   },
   "tags": ["family-base", "minimal"],
   "dependencies": {
-    "react-native-reanimated": "4.5.1",
-    "react-native-worklets": "0.10.1"
+    "react-native-reanimated": "4.7.1",
+    "react-native-worklets": "0.13.0"
   }
 }

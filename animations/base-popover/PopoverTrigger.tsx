@@ -31,7 +31,7 @@ export function PopoverTrigger({
   onLeave,
   testID,
 }: {
-  anchorRef: React.RefObject<View | null>;
+  anchorRef: React.RefObject<React.ComponentRef<typeof View> | View | null>;
   children: React.ReactNode;
   theme: BaseTheme;
   label?: string;
@@ -80,7 +80,9 @@ export function PopoverTrigger({
   return (
     <GestureDetector gesture={tooltip ? hold : tap}>
       <Animated.View
-        ref={anchorRef}
+        ref={
+          anchorRef as React.RefObject<React.ComponentRef<typeof View> | null>
+        }
         collapsable={false}
         testID={testID}
         accessible
@@ -89,35 +91,41 @@ export function PopoverTrigger({
         accessibilityHint={hint}
         accessibilityState={tooltip ? undefined : { expanded }}
 
-        {...(Platform.OS === 'web'
-          ? {
-              tabIndex: 0,
-              'aria-expanded': tooltip ? undefined : expanded,
-              'aria-description': hint,
-              'aria-haspopup': tooltip ? undefined : ('dialog' as const),
-              onMouseEnter: onHover,
-              onMouseLeave: onLeave,
-              onFocus: () => {
-                setFocused(true);
-                if (tooltip) onHover?.();
-              },
-              onBlur: () => {
-                setFocused(false);
-                if (tooltip) onLeave?.();
-              },
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  onActivate();
-                  if (tooltip) onRelease?.();
-                } else if (event.key === 'Escape') onLeave?.();
-              },
-            }
-          : {})}
-        {...baseActivationProps(() => {
-          onActivate();
-          if (tooltip) onRelease?.();
-        })}
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...((Platform.OS === 'web'
+            ? {
+                tabIndex: 0,
+                'aria-expanded': tooltip ? undefined : expanded,
+                'aria-description': hint,
+                'aria-haspopup': tooltip ? undefined : ('dialog' as const),
+                onMouseEnter: onHover,
+                onMouseLeave: onLeave,
+                onFocus: () => {
+                  setFocused(true);
+                  if (tooltip) onHover?.();
+                },
+                onBlur: () => {
+                  setFocused(false);
+                  if (tooltip) onLeave?.();
+                },
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onActivate();
+                    if (tooltip) onRelease?.();
+                  } else if (event.key === 'Escape') onLeave?.();
+                },
+              }
+            : {}) as object)
+        }
+        {
+          /* RN Web forwards DOM events rather than native event objects. */
+          ...(baseActivationProps(() => {
+            onActivate();
+            if (tooltip) onRelease?.();
+          }) as object)
+        }
         style={[
           {
             alignSelf: 'flex-start',
