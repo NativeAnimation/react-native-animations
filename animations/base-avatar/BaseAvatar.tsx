@@ -15,6 +15,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Image,
   Platform,
+  Pressable,
   Text,
   View,
   type ImageSourcePropType,
@@ -48,6 +49,8 @@ export type BaseAvatarGroupProps = {
   /** Optional controlled preview, also useful for keyboard navigation and presentations. */
   activeKey?: string | null;
   onActiveChange?: (key: string | null) => void;
+  /** Opens the member list through one accessible group target. */
+  onPress?: () => void;
   theme?: BaseTheme;
   style?: StyleProp<ViewStyle>;
   testID?: string;
@@ -173,6 +176,7 @@ export function BaseAvatarGroup({
   size = 'default',
   activeKey: controlled,
   onActiveChange,
+  onPress,
   theme: override,
   style,
   testID,
@@ -190,20 +194,8 @@ export function BaseAvatarGroup({
     if (controlled === undefined) setInternal(key);
     onActiveChange?.(key);
   };
-  return (
-    <View
-      testID={testID}
-      accessibilityLabel={accessibilityLabel}
-      style={[
-        {
-          flexDirection: 'row',
-          alignItems: 'center',
-          minHeight: 44,
-          overflow: 'visible',
-        },
-        style,
-      ]}
-    >
+  const members = (
+    <>
       {shown.map((avatar, index) => (
         <GroupAvatar
           key={avatar.key}
@@ -211,6 +203,7 @@ export function BaseAvatarGroup({
           size={size}
           index={index}
           active={activeKey === avatar.key}
+          interactive={!onPress}
           setActive={setActive}
           theme={theme}
           testID={testID ? `${testID}-${avatar.key}` : undefined}
@@ -218,12 +211,20 @@ export function BaseAvatarGroup({
       ))}
       {remaining > 0 ? (
         <View
-          accessible
-          accessibilityRole="image"
-          accessibilityLabel={`${remaining} more people: ${avatars
-            .slice(shown.length)
-            .map((avatar) => avatar.name)
-            .join(', ')}`}
+          accessible={!onPress}
+          aria-hidden={onPress ? true : undefined}
+          importantForAccessibility={
+            onPress ? 'no-hide-descendants' : undefined
+          }
+          accessibilityRole={onPress ? undefined : 'image'}
+          accessibilityLabel={
+            onPress
+              ? undefined
+              : `${remaining} more people: ${avatars
+                  .slice(shown.length)
+                  .map((avatar) => avatar.name)
+                  .join(', ')}`
+          }
           style={{
             width: SIZES[size],
             height: SIZES[size],
@@ -248,6 +249,48 @@ export function BaseAvatarGroup({
           </Text>
         </View>
       ) : null}
+    </>
+  );
+  return (
+    <View
+      testID={testID}
+      accessibilityLabel={onPress ? undefined : accessibilityLabel}
+      style={[
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
+          minHeight: onPress ? 48 : 44,
+          minWidth: onPress ? 48 : undefined,
+          overflow: 'visible',
+        },
+        style,
+      ]}
+    >
+      {onPress ? (
+        <>
+          <View
+            collapsable={false}
+            accessible={false}
+            pointerEvents="none"
+            aria-hidden
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
+            {members}
+          </View>
+          <Pressable
+            onPress={onPress}
+            accessibilityRole="button"
+            accessibilityLabel={
+              accessibilityLabel ?? `View ${avatars.length} members`
+            }
+            style={{ position: 'absolute', inset: 0 }}
+          />
+        </>
+      ) : (
+        members
+      )}
     </View>
   );
 }
@@ -257,6 +300,7 @@ function GroupAvatar({
   size,
   index,
   active,
+  interactive,
   setActive,
   theme,
   testID,
@@ -265,6 +309,7 @@ function GroupAvatar({
   size: AvatarSize;
   index: number;
   active: boolean;
+  interactive: boolean;
   setActive: (key: string | null) => void;
   theme: BaseTheme;
   testID?: string;
@@ -314,6 +359,7 @@ function GroupAvatar({
     );
   }, [active, diameter, reduced, exitTiming, lift, opacity, pop, held]);
   const tap = Gesture.Tap()
+    .enabled(interactive)
     .maxDuration(10000)
     .onBegin(() => {
       held.set(1);
@@ -369,116 +415,132 @@ function GroupAvatar({
     opacity: Math.max(0, Math.min(1, opacity.get())),
     transform: [{ scale: pop.get() }],
   }));
-  return (
-    <GestureDetector gesture={tap}>
-      <Animated.View
-        testID={testID}
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel={avatar.name}
-        accessibilityState={{ expanded: active }}
-        aria-expanded={active}
-        accessibilityHint="Touch and hold to show the name."
-        onAccessibilityTap={() => setActive(active ? null : avatar.key)}
-        accessibilityActions={[{ name: 'activate', label: 'Show name' }]}
-        onAccessibilityAction={(event) => {
-          if (event.nativeEvent.actionName === 'activate')
-            setActive(active ? null : avatar.key);
-        }}
-        onFocus={() => setActive(avatar.key)}
-        onBlur={() => setActive(null)}
+  const member = (
+    <Animated.View
+      testID={testID}
+      accessible={interactive}
+      aria-hidden={interactive ? undefined : true}
+      importantForAccessibility={
+        interactive ? undefined : 'no-hide-descendants'
+      }
+      accessibilityRole={interactive ? 'button' : undefined}
+      accessibilityLabel={interactive ? avatar.name : undefined}
+      accessibilityState={interactive ? { expanded: active } : undefined}
+      aria-expanded={interactive ? active : undefined}
+      accessibilityHint={
+        interactive ? 'Touch and hold to show the name.' : undefined
+      }
+      onAccessibilityTap={
+        interactive ? () => setActive(active ? null : avatar.key) : undefined
+      }
+      accessibilityActions={
+        interactive ? [{ name: 'activate', label: 'Show name' }] : undefined
+      }
+      onAccessibilityAction={
+        interactive
+          ? (event) => {
+              if (event.nativeEvent.actionName === 'activate')
+                setActive(active ? null : avatar.key);
+            }
+          : undefined
+      }
+      onFocus={interactive ? () => setActive(avatar.key) : undefined}
+      onBlur={interactive ? () => setActive(null) : undefined}
+      {
+        /* RN Web forwards DOM events rather than native event objects. */
+        ...((Platform.OS === 'web' && interactive
+          ? {
+              tabIndex: 0,
+              onClick: (event: React.MouseEvent) => {
+                if (event.detail === 0) setActive(active ? null : avatar.key);
+              },
+              onKeyDown: (event: React.KeyboardEvent) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setActive(avatar.key);
+                }
+              },
+              onKeyUp: (event: React.KeyboardEvent) => {
+                if (event.key === 'Enter' || event.key === ' ') setActive(null);
+              },
+            }
+          : {}) as object)
+      }
+      hitSlop={{
+        left: Math.max(0, (44 - diameter) / 2),
+        right: Math.max(0, (44 - diameter) / 2),
+      }}
+      style={[
         {
-          /* RN Web forwards DOM events rather than native event objects. */
-          ...((Platform.OS === 'web'
-            ? {
-                tabIndex: 0,
-                onClick: (event: React.MouseEvent) => {
-                  if (event.detail === 0) setActive(active ? null : avatar.key);
-                },
-                onKeyDown: (event: React.KeyboardEvent) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    setActive(avatar.key);
-                  }
-                },
-                onKeyUp: (event: React.KeyboardEvent) => {
-                  if (event.key === 'Enter' || event.key === ' ')
-                    setActive(null);
-                },
-              }
-            : {}) as object)
-        }
-        hitSlop={{
-          left: Math.max(0, (44 - diameter) / 2),
-          right: Math.max(0, (44 - diameter) / 2),
-        }}
-        style={[
-          {
-            width: diameter,
-            minHeight: 44,
-            marginLeft: index ? -8 : 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-          },
-          position,
-        ]}
+          width: diameter,
+          minHeight: 44,
+          marginLeft: index ? -8 : 0,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        position,
+      ]}
+    >
+      {/* Keep the gesture target still as the face and label lift together. */}
+      <Animated.View
+        pointerEvents="none"
+        style={[{ width: diameter, height: diameter }, lifted]}
       >
-        {/* Keep the gesture target still as the face and label lift together. */}
+        <View
+          style={{
+            width: diameter,
+            height: diameter,
+            borderRadius: theme.radius.full,
+            borderWidth: 2,
+            borderColor: theme.colors.background,
+          }}
+        >
+          <AvatarFace
+            key={JSON.stringify(avatar.source)}
+            source={avatar.source}
+            fallback={avatar.fallback}
+            size={size}
+            theme={theme}
+          />
+        </View>
         <Animated.View
           pointerEvents="none"
-          style={[{ width: diameter, height: diameter }, lifted]}
+          aria-hidden
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          style={[
+            {
+              position: 'absolute',
+              bottom: diameter + 8,
+              alignSelf: 'center',
+              backgroundColor: theme.colors.primary,
+              borderRadius: theme.radius.md,
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              minWidth: 96,
+              alignItems: 'center',
+            },
+            tooltip,
+          ]}
         >
-          <View
+          <Text
+            numberOfLines={1}
             style={{
-              width: diameter,
-              height: diameter,
-              borderRadius: theme.radius.full,
-              borderWidth: 2,
-              borderColor: theme.colors.background,
+              fontFamily: theme.fonts.medium,
+              fontSize: 12,
+              lineHeight: 16,
+              color: theme.colors.primaryForeground,
             }}
           >
-            <AvatarFace
-              key={JSON.stringify(avatar.source)}
-              source={avatar.source}
-              fallback={avatar.fallback}
-              size={size}
-              theme={theme}
-            />
-          </View>
-          <Animated.View
-            pointerEvents="none"
-            aria-hidden
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-            style={[
-              {
-                position: 'absolute',
-                bottom: diameter + 8,
-                alignSelf: 'center',
-                backgroundColor: theme.colors.primary,
-                borderRadius: theme.radius.md,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                minWidth: 96,
-                alignItems: 'center',
-              },
-              tooltip,
-            ]}
-          >
-            <Text
-              numberOfLines={1}
-              style={{
-                fontFamily: theme.fonts.medium,
-                fontSize: 12,
-                lineHeight: 16,
-                color: theme.colors.primaryForeground,
-              }}
-            >
-              {avatar.name}
-            </Text>
-          </Animated.View>
+            {avatar.name}
+          </Text>
         </Animated.View>
       </Animated.View>
-    </GestureDetector>
+    </Animated.View>
+  );
+  return interactive ? (
+    <GestureDetector gesture={tap}>{member}</GestureDetector>
+  ) : (
+    member
   );
 }

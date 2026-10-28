@@ -5,7 +5,13 @@ import {
   type BaseTheme,
 } from '../base-theme';
 import React, { Children, useState } from 'react';
-import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  Platform,
+  Text,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import ChevronLeft from 'lucide-react-native/icons/chevron-left';
 import Animated, {
   Extrapolation,
@@ -48,9 +54,10 @@ export function BaseHeader({
   const theme = useBaseTheme(override);
   const reduced = useBaseReducedMotion();
   const [actionsWidth, setActionsWidth] = useState(
-    Children.count(actions) * 44,
+    Children.count(actions) * (Platform.OS === 'android' ? 48 : 44),
   );
-  const sideWidth = Math.max(onBack ? 44 : 0, actionsWidth);
+  const actionSize = Platform.OS === 'android' ? 48 : 44;
+  const sideWidth = Math.max(onBack ? actionSize : 0, actionsWidth);
   const borderStyle = useAnimatedStyle(() => ({
     opacity: scrollY
       ? interpolate(scrollY.get(), [0, 8], [0, 1], Extrapolation.CLAMP)
@@ -99,7 +106,7 @@ export function BaseHeader({
         >
           <View
             style={{
-              width: align === 'center' ? sideWidth : onBack ? 44 : 0,
+              width: align === 'center' ? sideWidth : onBack ? actionSize : 0,
               alignItems: 'flex-start',
             }}
           >
@@ -163,7 +170,7 @@ export function BaseHeader({
             style={{
               position: 'absolute',
               right: 8,
-              top: 6,
+              top: Platform.OS === 'android' ? 4 : 6,
               flexDirection: 'row',
               alignItems: 'center',
             }}
@@ -174,8 +181,8 @@ export function BaseHeader({
                   React.isValidElement(action) ? (action.key ?? index) : index
                 }
                 style={{
-                  minWidth: 44,
-                  minHeight: 44,
+                  minWidth: actionSize,
+                  minHeight: actionSize,
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'center',

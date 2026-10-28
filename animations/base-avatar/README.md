@@ -33,7 +33,7 @@ import { BaseAvatar, BaseAvatarGroup } from './base-avatar';
 <BaseAvatarGroup size="lg" max={4} avatars={[
   { key: 'alex', source: photo, fallback: 'AL', name: 'Alex Lee' },
   { key: 'jordan', fallback: 'JR', name: 'Jordan Reed' },
-]} />
+]} onPress={openMembers} accessibilityLabel="View team members" />
 ```
 
 Wrap your app in `BaseThemeProvider` (from `base-theme`) to choose light/dark and an accent; without it, pieces use the light neutral theme. Every piece also takes a `theme` prop that wins over the provider.
@@ -54,6 +54,7 @@ Wrap your app in `BaseThemeProvider` (from `base-theme`) to choose light/dark an
 | `max` | `number` | `4` | Maximum visible people before the +N counter; clamped to a nonnegative integer. |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Diameter of every group member and counter. |
 | `activeKey` | `string \| null` | `uncontrolled` | Optional controlled name preview, useful for presentations. |
+| `onPress` | `() => void` | `—` | Optional action for the whole group; replaces individual interaction with one target. |
 | `onActiveChange` | `(key: string \| null) => void` | `—` | Touch/focus preview changes; supply with activeKey for controlled use. |
 
 ## Compatibility
@@ -62,4 +63,9 @@ Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13
 
 ## Accessibility
 
-Provide names for standalone images and include presence in a custom label. Group members expose each person's full name; the counter lists the hidden names. Members reserve 44 pt height and use horizontal `hitSlop` to expand small visuals. Adjacent hit areas overlap, so the topmost avatar receives a touch in the overlap. Keyboard focus or Enter/Space reveals names on web. Accessibility activation toggles the preview. Reduce Motion removes lift and scale and changes the tooltip immediately.
+Provide names for standalone images and include presence in a custom label. Without a group onPress, members expose each person's full name; the counter lists the hidden names. Members reserve 44 pt height and use horizontal `hitSlop` to expand small visuals. Adjacent hit areas overlap, so the topmost avatar receives a touch in the overlap. Keyboard focus or Enter/Space reveals names on web. Accessibility activation toggles the preview. Reduce Motion removes lift and scale and changes the tooltip immediately.
+
+
+## Touch targets
+
+Use the optional group onPress to open a member list. It provides one target of at least 48×48 dp on Android and 48×48 pt on iOS and 48×48 px on web, with accessibilityLabel or “View N members” as its name. It replaces individual touch and keyboard previews while preserving controlled previews. Without onPress, overlapping members keep their existing name previews; their individual targets do not meet the 44/48 minimum. Standalone avatars are images. Do not shrink or overlap the group target.

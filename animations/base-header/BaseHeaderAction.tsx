@@ -40,7 +40,6 @@ export function BaseHeaderAction({
   const pressed = useSharedValue(1);
   const tap = Gesture.Tap()
     .enabled(!disabled)
-    .hitSlop(Platform.OS === 'android' ? 2 : 0)
     .onBegin(() => {
       pressed.set(
         reduced
@@ -66,7 +65,6 @@ export function BaseHeaderAction({
         accessibilityLabel={label}
         accessibilityState={{ disabled }}
         aria-disabled={disabled}
-        hitSlop={Platform.OS === 'android' ? 2 : 0}
 
         {
           /* RN Web forwards DOM events rather than native event objects. */
@@ -91,8 +89,8 @@ export function BaseHeaderAction({
         }
         style={[
           {
-            width: 44,
-            height: 44,
+            width: Platform.OS === 'android' ? 48 : 44,
+            height: Platform.OS === 'android' ? 48 : 44,
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: theme.radius.md,

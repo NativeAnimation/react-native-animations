@@ -64,4 +64,9 @@ Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13
 
 ## Accessibility
 
-Pressable rows are announced as buttons with their title and description and support accessibility activation and Enter/Space on web. All rows have a minimum 44 pt height. Put independently interactive controls in rows without `onPress` so their semantics stay separate. Reduce Motion keeps scale at 1 and makes the surface change immediate.
+Pressable rows are announced as buttons with their title and description and support accessibility activation and Enter/Space on web. Rows have a minimum 48 dp height on Android; a one-line sm row is 46 pt on iOS and 46 px on web. Put independently interactive controls in rows without `onPress` so their semantics stay separate. Reduce Motion keeps scale at 1 and makes the surface change immediate.
+
+
+## Touch targets
+
+Android rows are at least 48 dp tall. A one-line sm row is 46 pt tall on iOS and 46 px on web. A default row is at least 54 on every platform. Content can make rows taller. Keep pressable rows at least 48 dp wide on Android or 44 pt wide on iOS and 44 px wide on web. Give separate trailing controls their own full targets.

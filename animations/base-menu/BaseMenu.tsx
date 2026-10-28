@@ -254,7 +254,7 @@ function MenuRow({
           NO_WEB_OUTLINE,
           [
             {
-              minHeight: 44,
+              minHeight: Platform.OS === 'android' ? 48 : 44,
               paddingHorizontal: 8,
               paddingVertical: 12,
               borderRadius: theme.radius.sm,

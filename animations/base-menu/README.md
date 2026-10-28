@@ -76,3 +76,8 @@ Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13
 ## Accessibility
 
 Menu items expose checked and disabled states. Outside taps, the Android back button, accessibility escape, and Escape on web close the menu. Web items support Tab navigation and Enter/Space activation. Reduce Motion makes panel transitions and highlights immediate.
+
+
+## Touch targets
+
+Action and checkbox rows are at least 48 dp tall on Android and 44 pt tall on iOS and 44 px tall on web. Longer menus scroll within the screen. The host supplies the trigger: give it at least 48×48 dp on Android or 44×44 pt on iOS and 44×44 px on web.

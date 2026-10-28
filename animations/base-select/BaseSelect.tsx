@@ -341,7 +341,7 @@ function Option({
         style={[
           NO_WEB_OUTLINE,
           {
-            minHeight: 44,
+            minHeight: Platform.OS === 'android' ? 48 : 44,
             paddingHorizontal: 8,
             paddingVertical: 6,
             borderRadius: theme.radius.sm,

@@ -80,3 +80,8 @@ Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13
 ## Accessibility
 
 The trigger is a combobox with its expanded, disabled, and current value states. Options expose selected and disabled states. Outside taps, Android back, accessibility escape, and web Escape close the list. Enter/Space or arrow keys open it on web; Tab and Enter/Space navigate and choose options. Reduce Motion makes all transitions immediate.
+
+
+## Touch targets
+
+Options are at least 48 dp tall on Android and 44 pt tall on iOS and 44 px tall on web. The field target is 48 dp tall on Android and 44 pt on iOS and 44 px on web. Longer lists scroll within the screen. Keep the field at least 48 dp wide on Android or 44 pt wide on iOS and 44 px wide on web. Leave enough room between neighboring fields for their full targets.

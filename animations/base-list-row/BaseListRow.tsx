@@ -149,7 +149,7 @@ export function BaseListRow({
       }
       style={[
         {
-          minHeight: 44,
+          minHeight: Platform.OS === 'android' ? 48 : 44,
           borderRadius: theme.radius.md,
           borderWidth: 1,
           borderColor: variant === 'outline' ? colors.border : 'transparent',
