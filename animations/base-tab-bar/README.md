@@ -26,7 +26,8 @@ Wrap the host app in `GestureHandlerRootView`.
 ## Usage
 
 ```tsx
-import { Home, Search } from 'lucide-react-native';
+import Home from 'lucide-react-native/icons/house';
+import Search from 'lucide-react-native/icons/search';
 import { BaseTabBar } from './base-tab-bar';
 
 <BaseTabBar
@@ -43,9 +44,9 @@ import { BaseTabBar } from './base-tab-bar';
 ```tsx
 import { Tabs } from 'expo-router';
 
-// Expo Router integration belongs in the host app's layout.
+// Expo SDK 58: put this integration in the host app's layout.
 <Tabs
-  tabBar={({ state, navigation, insets }) => (
+  tabBar={({ state, emitter, navigateToTab, insets }) => (
     <BaseTabBar
       value={state.routes[state.index].name}
       bottomInset={insets.bottom}
@@ -53,13 +54,15 @@ import { Tabs } from 'expo-router';
       onValueChange={(name) => {
         const route = state.routes.find((candidate) => candidate.name === name);
         if (!route) return;
-        const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-        if (!event.defaultPrevented) navigation.navigate(route.name, route.params);
+        const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+        if (!event.defaultPrevented) navigateToTab(route.key);
       }}
     />
   )}
 />
 ```
+
+In SDK 57, `tabBar` provides `navigation` instead: use `navigation.emit(...)` and, unless prevented, `navigation.navigate(route.name, route.params)`.
 
 Position the bar at the bottom of your screen and reserve space for it in the content. The host owns scrolling and navigation; the component has no router dependency. The demo hides after 6 pt of downward scroll and reveals on upward scroll.
 
@@ -83,5 +86,7 @@ Wrap your app in `BaseThemeProvider` (from `base-theme`) to choose light/dark an
 Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13. Runs on iOS, Android and web, in Expo Go and development builds. Part of **Native Animation Base**, a free family that shares one theme.
 
 ## Accessibility
+
+Targets fill the space halfway to each neighboring tab without overlapping; the icons and active pill keep their original size. On Android, reserve at least 48 dp per tab in the content area inside the horizontal padding. Targets keep that minimum by adjusting shared boundaries when needed, independently of the active label. A host narrower than the combined minimum keeps targets separate but cannot give every tab 48 dp.
 
 Tabs expose their selected state and include unread badge counts in their accessible names. Hidden navigation is removed from accessibility and pointer interaction. Web tabs support Enter/Space activation. Reduce Motion removes press scaling and makes label, pill, and visibility changes immediate.

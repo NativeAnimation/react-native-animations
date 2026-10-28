@@ -12,6 +12,7 @@ import X from 'lucide-react-native/icons/x';
 import { InputAction, InputGlyph } from './InputAction';
 import {
   Platform,
+  Pressable,
   Text,
   TextInput,
   View,
@@ -98,6 +99,14 @@ export function BaseInput({
   const hasReveal = secure && revealable && !multiline;
   const hasClear = clearable && !hasReveal;
   const limit = Math.max(64, maxHeight);
+  const target = Platform.OS === 'android' ? 48 : 44;
+  const fieldHeight = multiline
+    ? Math.min(limit, Math.max(64, contentHeight + 2))
+    : hasReveal || hasClear
+      ? 44
+      : 36;
+  const extra =
+    Platform.OS === 'web' ? 0 : Math.max(0, (target - fieldHeight) / 2);
   // Web scrollHeight includes the current frame. Reset it before measuring so deletion can shrink the field.
   const measureWebContent = useCallback(() => {
     if (Platform.OS === 'web' && multiline) {
@@ -148,8 +157,158 @@ export function BaseInput({
     opacity: error ? 1 : focus.get(),
   }));
 
+  // Web retains the original nonfocusable frame for modal focus discovery.
+  const fieldContent = (
+    <>
+      {Platform.OS !== 'web' ? (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            {
+              position: 'absolute',
+              top: extra,
+              bottom: extra,
+              left: 0,
+              right: 0,
+              borderWidth: 1,
+              borderRadius: theme.radius.md,
+              backgroundColor: colors.inputSurface,
+              boxShadow: theme.shadow.xs,
+            },
+            fieldStyle,
+          ]}
+        />
+      ) : null}
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            top: Platform.OS === 'web' ? -4 : extra - 3,
+            left: Platform.OS === 'web' ? -4 : -3,
+            right: Platform.OS === 'web' ? -4 : -3,
+            bottom: Platform.OS === 'web' ? -4 : extra - 3,
+            borderWidth: 3,
+            borderRadius: theme.radius.md + 3,
+            borderColor: ringColor,
+          },
+          ringStyle,
+        ]}
+      />
+      {leading ? <View style={{ paddingLeft: 12 }}>{leading}</View> : null}
+      <TextInput
+        ref={inputRef}
+        testID={testID}
+        accessibilityLabel={accessibilityLabel ?? label}
+        value={text}
+        onChangeText={changeText}
+        placeholder={placeholder}
+        placeholderTextColor={colors.mutedForeground}
+        selectionColor={colors.primary}
+        {...inputProps}
+        accessibilityState={{ ...inputProps?.accessibilityState, disabled }}
+        aria-disabled={disabled}
+        aria-invalid={Boolean(error)}
+        editable={!disabled}
+        multiline={multiline}
+        secureTextEntry={secure && !revealed && !multiline}
+        scrollEnabled={
+          multiline ? contentHeight + 2 >= limit : inputProps?.scrollEnabled
+        }
+        onLayout={(event) => {
+          const width = event.nativeEvent.layout.width;
+          setInputWidth((current) => (current === width ? current : width));
+          inputProps?.onLayout?.(event);
+        }}
+        onContentSizeChange={(event) => {
+          const height = event.nativeEvent.contentSize.height;
+          if (Platform.OS !== 'web') setContentHeight(Math.ceil(height));
+          inputProps?.onContentSizeChange?.(event);
+        }}
+        onFocus={(e) => {
+          setFocused(true);
+          inputProps?.onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          inputProps?.onBlur?.(e);
+        }}
+        style={[
+          {
+            flex: 1,
+            minWidth: 0,
+            height:
+              Platform.OS !== 'web' && multiline ? fieldHeight - 2 : '100%',
+            paddingLeft: multiline ? 12 : leading ? 8 : 12,
+            paddingRight: multiline
+              ? 12
+              : trailing || hasReveal || hasClear
+                ? 8
+                : 12,
+            paddingVertical: multiline ? 8 : 0,
+            textAlignVertical: multiline ? 'top' : 'center',
+            fontFamily: theme.fonts.regular,
+            fontSize: 16,
+            color: colors.foreground,
+            outlineWidth: 0,
+            // Web only: hide the browser focus outline; the 3px ring replaces it.
+            ...(Platform.OS === 'web'
+              ? ({ outlineStyle: 'none' } as object)
+              : null),
+          },
+          inputProps?.style,
+        ]}
+      />
+      {hasReveal ? (
+        <InputAction
+          theme={theme}
+          disabled={disabled}
+          testID={testID ? `${testID}-reveal` : undefined}
+          label={revealed ? hidePasswordLabel : showPasswordLabel}
+          onPress={() => setRevealed((current) => !current)}
+        >
+          <InputGlyph visible={!revealed} theme={theme}>
+            <Eye size={16} color={colors.mutedForeground} />
+          </InputGlyph>
+          <InputGlyph visible={revealed} theme={theme}>
+            <EyeOff size={16} color={colors.mutedForeground} />
+          </InputGlyph>
+        </InputAction>
+      ) : null}
+      {hasClear ? (
+        <View
+          pointerEvents={text ? 'auto' : 'none'}
+          accessibilityElementsHidden={!text}
+          importantForAccessibility={text ? 'auto' : 'no-hide-descendants'}
+          aria-hidden={!text}
+        >
+          <InputAction
+            theme={theme}
+            disabled={disabled || !text}
+            label={clearLabel}
+            onPress={clear}
+            testID={testID ? `${testID}-clear` : undefined}
+          >
+            <InputGlyph visible={!!text} theme={theme} exit="popOut">
+              <X size={16} color={colors.mutedForeground} />
+            </InputGlyph>
+          </InputAction>
+        </View>
+      ) : null}
+      {trailing ? <View style={{ paddingRight: 8 }}>{trailing}</View> : null}
+    </>
+  );
+
   return (
-    <View style={{ gap: 8, opacity: disabled ? 0.5 : 1 }}>
+    <View
+      style={{
+        gap: 8,
+        opacity: disabled ? 0.5 : 1,
+        // Keep the ancestor large enough to receive the field's transparent edges.
+        paddingVertical: extra,
+        marginVertical: -extra,
+      }}
+    >
       {label ? (
         <Text
           style={{
@@ -162,141 +321,40 @@ export function BaseInput({
           {label}
         </Text>
       ) : null}
-      <Animated.View
-        style={[
-          {
-            height: multiline
-              ? Math.min(limit, Math.max(64, contentHeight + 2))
-              : hasReveal || hasClear
-                ? 44
-                : 36,
-            borderWidth: 1,
-            borderRadius: theme.radius.md,
-            backgroundColor: colors.inputSurface,
-            boxShadow: theme.shadow.xs,
+      {Platform.OS === 'web' ? (
+        <Animated.View
+          style={[
+            {
+              height: fieldHeight,
+              borderWidth: 1,
+              borderRadius: theme.radius.md,
+              backgroundColor: colors.inputSurface,
+              boxShadow: theme.shadow.xs,
+              flexDirection: 'row',
+              alignItems: 'center',
+            },
+            fieldStyle,
+          ]}
+        >
+          {fieldContent}
+        </Animated.View>
+      ) : (
+        <Pressable
+          accessible={false}
+          focusable={false}
+          disabled={disabled}
+          onPress={() => inputRef.current?.focus()}
+          style={{
+            height: fieldHeight + extra * 2,
+            marginVertical: -extra,
+            paddingHorizontal: 1,
             flexDirection: 'row',
             alignItems: 'center',
-          },
-          fieldStyle,
-        ]}
-      >
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            {
-              position: 'absolute',
-              top: -4,
-              left: -4,
-              right: -4,
-              bottom: -4,
-              borderWidth: 3,
-              borderRadius: theme.radius.md + 3,
-              borderColor: ringColor,
-            },
-            ringStyle,
-          ]}
-        />
-        {leading ? <View style={{ paddingLeft: 12 }}>{leading}</View> : null}
-        <TextInput
-          ref={inputRef}
-          testID={testID}
-          accessibilityLabel={accessibilityLabel ?? label}
-          value={text}
-          onChangeText={changeText}
-          placeholder={placeholder}
-          placeholderTextColor={colors.mutedForeground}
-          selectionColor={colors.primary}
-          {...inputProps}
-          accessibilityState={{ ...inputProps?.accessibilityState, disabled }}
-          aria-disabled={disabled}
-          aria-invalid={Boolean(error)}
-          editable={!disabled}
-          multiline={multiline}
-          secureTextEntry={secure && !revealed && !multiline}
-          scrollEnabled={
-            multiline ? contentHeight + 2 >= limit : inputProps?.scrollEnabled
-          }
-          onLayout={(event) => {
-            const width = event.nativeEvent.layout.width;
-            setInputWidth((current) => (current === width ? current : width));
-            inputProps?.onLayout?.(event);
           }}
-          onContentSizeChange={(event) => {
-            const height = event.nativeEvent.contentSize.height;
-            if (Platform.OS !== 'web') setContentHeight(Math.ceil(height));
-            inputProps?.onContentSizeChange?.(event);
-          }}
-          onFocus={(e) => {
-            setFocused(true);
-            inputProps?.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setFocused(false);
-            inputProps?.onBlur?.(e);
-          }}
-          style={[
-            {
-              flex: 1,
-              minWidth: 0,
-              height: '100%',
-              paddingLeft: multiline ? 12 : leading ? 8 : 12,
-              paddingRight: multiline
-                ? 12
-                : trailing || hasReveal || hasClear
-                  ? 8
-                  : 12,
-              paddingVertical: multiline ? 8 : 0,
-              textAlignVertical: multiline ? 'top' : 'center',
-              fontFamily: theme.fonts.regular,
-              fontSize: 16,
-              color: colors.foreground,
-              outlineWidth: 0,
-              // Web only: hide the browser focus outline; the 3px ring replaces it.
-              ...(Platform.OS === 'web'
-                ? ({ outlineStyle: 'none' } as object)
-                : null),
-            },
-            inputProps?.style,
-          ]}
-        />
-        {hasReveal ? (
-          <InputAction
-            theme={theme}
-            disabled={disabled}
-            testID={testID ? `${testID}-reveal` : undefined}
-            label={revealed ? hidePasswordLabel : showPasswordLabel}
-            onPress={() => setRevealed((current) => !current)}
-          >
-            <InputGlyph visible={!revealed} theme={theme}>
-              <Eye size={16} color={colors.mutedForeground} />
-            </InputGlyph>
-            <InputGlyph visible={revealed} theme={theme}>
-              <EyeOff size={16} color={colors.mutedForeground} />
-            </InputGlyph>
-          </InputAction>
-        ) : null}
-        {hasClear ? (
-          <View
-            pointerEvents={text ? 'auto' : 'none'}
-            accessibilityElementsHidden={!text}
-            importantForAccessibility={text ? 'auto' : 'no-hide-descendants'}
-            aria-hidden={!text}
-          >
-            <InputAction
-              theme={theme}
-              disabled={disabled || !text}
-              label={clearLabel}
-              onPress={clear}
-              testID={testID ? `${testID}-clear` : undefined}
-            >
-              <InputGlyph visible={!!text} theme={theme} exit="popOut">
-                <X size={16} color={colors.mutedForeground} />
-              </InputGlyph>
-            </InputAction>
-          </View>
-        ) : null}
-        {trailing ? <View style={{ paddingRight: 8 }}>{trailing}</View> : null}
-      </Animated.View>
+        >
+          {fieldContent}
+        </Pressable>
+      )}
       {error || helperText ? (
         <Text
           style={{

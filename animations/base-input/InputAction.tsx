@@ -38,7 +38,6 @@ export function InputAction({
   const pressed = useSharedValue(1);
   const tap = Gesture.Tap()
     .enabled(!disabled)
-    .hitSlop(Platform.OS === 'android' ? 2 : 0)
     .onBegin(() => {
       pressed.set(
         reduced
@@ -64,7 +63,6 @@ export function InputAction({
         accessibilityLabel={label}
         accessibilityState={{ disabled }}
         aria-disabled={disabled}
-        hitSlop={Platform.OS === 'android' ? 2 : 0}
 
         {
           /* RN Web forwards DOM events rather than native event objects. */
@@ -89,8 +87,9 @@ export function InputAction({
         }
         style={[
           {
-            width: 44,
-            height: 44,
+            width: Platform.OS === 'android' ? 48 : 44,
+            height: Platform.OS === 'android' ? 48 : 44,
+            marginLeft: Platform.OS === 'android' ? -4 : 0,
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: theme.radius.md,
@@ -99,7 +98,22 @@ export function InputAction({
           animated,
         ]}
       >
-        {children}
+        {Platform.OS === 'web' ? (
+          children
+        ) : (
+          <View
+            pointerEvents="none"
+            style={{
+              width: 44,
+              height: 44,
+              alignItems: 'center',
+              justifyContent: 'center',
+              transform: [{ translateX: Platform.OS === 'android' ? 2 : 0 }],
+            }}
+          >
+            {children}
+          </View>
+        )}
       </Animated.View>
     </GestureDetector>
   );

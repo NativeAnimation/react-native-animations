@@ -1,6 +1,8 @@
 import Animated, {
   ReduceMotion,
+  useAnimatedReaction,
   useAnimatedStyle,
+  type SharedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
@@ -25,6 +27,9 @@ import { scheduleOnRN } from 'react-native-worklets';
 // Web only: no browser focus outline; the item highlight shows focus instead.
 const NO_WEB_OUTLINE =
   Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null;
+
+type TabFrame = { x: number; width: number };
+type TabLayout = TabFrame & { value: string };
 
 export type BaseTabBarItem = {
   /** Current controlled value. */
@@ -69,6 +74,7 @@ export function BaseTabBar({
   const [labelWidths, setLabelWidths] = useState<Record<string, number>>({});
   const [contentWidth, setContentWidth] = useState(0);
   const [barHeight, setBarHeight] = useState(56 + bottomInset);
+  const frames = useSharedValue<Record<string, TabFrame>>({});
   const x = useSharedValue(0);
   const pillWidth = useSharedValue(0);
   const offset = useSharedValue(0);
@@ -87,6 +93,13 @@ export function BaseTabBar({
       : 0;
   const targetX = Math.max(0, selectedIndex) * (44 + gap);
   const targetWidth = selectedIndex < 0 ? 0 : 44 + extraWidth;
+  const layouts: TabLayout[] = items.map((item, index) => ({
+    value: item.value,
+    x:
+      index * (44 + gap) +
+      (index > selectedIndex && selectedIndex >= 0 ? extraWidth : 0),
+    width: 44 + (index === selectedIndex ? extraWidth : 0),
+  }));
   useEffect(() => {
     x.set(reduced ? targetX : withSpring(targetX, spring(theme, 'selection')));
     pillWidth.set(
@@ -140,7 +153,9 @@ export function BaseTabBar({
         role="tablist"
         onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         style={{
-          height: 40,
+          // Include the full target in the native parent's bounds.
+          height: 48,
+          marginVertical: -4,
         }}
       >
         <Animated.View
@@ -148,7 +163,7 @@ export function BaseTabBar({
           style={[
             {
               position: 'absolute',
-              top: 0,
+              top: 4,
               height: 40,
               borderRadius: theme.radius.full,
               backgroundColor: theme.colors.secondary,
@@ -173,6 +188,9 @@ export function BaseTabBar({
               Math.max(0, contentWidth - items.length * 44 - 8),
             )}
             measurementWidth={contentWidth}
+            frames={frames}
+            layouts={layouts}
+            index={index}
             onLabelWidth={(measured) =>
               setLabelWidths((current) =>
                 current[item.value] === measured
@@ -195,6 +213,9 @@ function Tab({
   x,
   labelWidth,
   measurementWidth,
+  frames,
+  layouts,
+  index,
   onLabelWidth,
 }: {
   item: BaseTabBarItem;
@@ -205,9 +226,13 @@ function Tab({
   x: number;
   labelWidth: number;
   measurementWidth: number;
+  frames: SharedValue<Record<string, TabFrame>>;
+  layouts: TabLayout[];
+  index: number;
   onLabelWidth: (width: number) => void;
 }) {
   const reduced = useBaseReducedMotion();
+  const itemValue = item.value;
   const position = useSharedValue(x);
   useEffect(() => {
     position.set(reduced ? x : withSpring(x, spring(theme, 'selection')));
@@ -225,6 +250,54 @@ function Tab({
     width: (labelWidth + 8) * Math.max(0, reveal.get()),
     opacity: Math.max(0, Math.min(1, reveal.get())),
   }));
+  useAnimatedReaction(
+    () => ({
+      x: position.get(),
+      width: 44 + (labelWidth + 8) * Math.max(0, reveal.get()),
+    }),
+    (frame) => {
+      frames.modify((current) => {
+        'worklet';
+        current[itemValue] = frame;
+        return current;
+      });
+    },
+    Platform.OS === 'web'
+      ? [itemValue, labelWidth, position, reveal]
+      : undefined,
+  );
+  const minimumTargetWidth = Platform.OS === 'ios' ? 44 : 48;
+  const targetStyle = useAnimatedStyle(() => {
+    const current = frames.get();
+    const minimum = Math.min(
+      minimumTargetWidth,
+      measurementWidth / layouts.length,
+    );
+    let left = 0;
+    let right = measurementWidth;
+    // Every target computes the same ordered boundaries from the live drawings.
+    // Reserve the platform minimum for neighbors when the host is narrow.
+    for (let boundary = 1; boundary < layouts.length; boundary++) {
+      const previous = layouts[boundary - 1];
+      const next = layouts[boundary];
+      const before = current[previous.value] ?? previous;
+      const after = current[next.value] ?? next;
+      const midpoint = (before.x + before.width + after.x) / 2;
+      const edge = Math.min(
+        measurementWidth - (layouts.length - boundary) * minimum,
+        Math.max(left + minimum, midpoint),
+      );
+      if (boundary === index + 1) {
+        right = edge;
+        break;
+      }
+      left = edge;
+    }
+    return {
+      width: Math.max(0, right - left),
+      transform: [{ translateX: left }],
+    };
+  });
   const pressStyle = useAnimatedStyle(() => ({
     width: 44 + (labelWidth + 8) * Math.max(0, reveal.get()),
     transform: [{ translateX: position.get() }, { scale: press.get() }],
@@ -245,51 +318,26 @@ function Tab({
     color: theme.colors.foreground,
   };
   return (
-    <GestureDetector gesture={tap}>
+    <>
       <Animated.View
-        testID={testID}
-        accessible
-        accessibilityRole="tab"
-        accessibilityLabel={
-          item.badge ? `${item.label}, ${item.badge} unread` : item.label
-        }
-        accessibilityState={{ selected }}
-        aria-selected={selected}
-
-        {
-          /* RN Web forwards DOM events rather than native event objects. */
-          ...((Platform.OS === 'web'
-            ? {
-                tabIndex: 0,
-                onKeyDown: (event: React.KeyboardEvent) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    onSelect();
-                  }
-                },
-              }
-            : {}) as object)
-        }
-        {
-          /* RN Web forwards DOM events rather than native event objects. */
-          ...(baseActivationProps(onSelect, false) as object)
-        }
+        pointerEvents="none"
+        aria-hidden
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
         style={[
-          NO_WEB_OUTLINE,
-          [
-            {
-              position: 'absolute',
-              left: 0,
-              top: -4,
-              minWidth: 44,
-              minHeight: 48,
-              paddingHorizontal: 12,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-            },
-            pressStyle,
-          ],
+          {
+            // Keep the drawing independent of the transparent touch target.
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            minWidth: 44,
+            minHeight: 48,
+            paddingHorizontal: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+          pressStyle,
         ]}
       >
         <View style={{ width: 20, height: 20 }}>
@@ -356,7 +404,50 @@ function Tab({
           </Text>
         </View>
       </Animated.View>
-    </GestureDetector>
+      <GestureDetector gesture={tap}>
+        <Animated.View
+          testID={testID}
+          accessible
+          accessibilityRole="tab"
+          accessibilityLabel={
+            item.badge ? `${item.label}, ${item.badge} unread` : item.label
+          }
+          accessibilityState={{ selected }}
+          aria-selected={selected}
+
+          {
+            /* RN Web forwards DOM events rather than native event objects. */
+            ...((Platform.OS === 'web'
+              ? {
+                  tabIndex: 0,
+                  onKeyDown: (event: React.KeyboardEvent) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      onSelect();
+                    }
+                  },
+                }
+              : {}) as object)
+          }
+          {
+            /* RN Web forwards DOM events rather than native event objects. */
+            ...(baseActivationProps(onSelect, false) as object)
+          }
+          style={[
+            NO_WEB_OUTLINE,
+            [
+              {
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                height: 48,
+              },
+              targetStyle,
+            ],
+          ]}
+        />
+      </GestureDetector>
+    </>
   );
 }
 export default BaseTabBar;

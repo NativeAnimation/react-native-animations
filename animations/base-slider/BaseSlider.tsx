@@ -301,7 +301,8 @@ export function BaseSlider({
         onLayout={onLayout}
         style={[
           {
-            height: 44,
+            height: Platform.OS === 'android' ? 48 : 44,
+            marginVertical: Platform.OS === 'android' ? -2 : 0,
             width: '100%',
             justifyContent: 'center',
             opacity: disabled ? 0.5 : 1,
@@ -334,7 +335,7 @@ export function BaseSlider({
           style={[
             {
               position: 'absolute',
-              top: 14,
+              top: Platform.OS === 'android' ? 16 : 14,
               left: 0,
               height: THUMB_SIZE + 8,
               borderRadius: theme.radius.full,
@@ -349,7 +350,7 @@ export function BaseSlider({
             style={[
               {
                 position: 'absolute',
-                top: 14,
+                top: Platform.OS === 'android' ? 16 : 14,
                 left: 0,
                 height: THUMB_SIZE + 8,
                 borderRadius: theme.radius.full,
@@ -365,7 +366,7 @@ export function BaseSlider({
             {
               position: 'absolute',
               left: 0,
-              top: 14,
+              top: Platform.OS === 'android' ? 16 : 14,
               height: THUMB_SIZE,
               borderRadius: theme.radius.full,
               borderWidth: 1,
@@ -382,7 +383,7 @@ export function BaseSlider({
               {
                 position: 'absolute',
                 left: 0,
-                top: 14,
+                top: Platform.OS === 'android' ? 16 : 14,
                 height: THUMB_SIZE,
                 borderRadius: theme.radius.full,
                 borderWidth: 1,

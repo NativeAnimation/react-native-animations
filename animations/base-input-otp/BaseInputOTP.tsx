@@ -201,6 +201,8 @@ export function BaseInputOTP({
     return result;
   }, [length, normalizedGroups]);
   const totalWidth = positions[length - 1] + CELL;
+  const targetSize = Platform.OS === 'android' ? 48 : 44;
+  const horizontalExtra = Math.max(0, (targetSize - totalWidth) / 2);
   const activeIndex = Math.min(digits.length, length - 1);
   const activeX = useSharedValue(positions[activeIndex] ?? 0);
   const shake = useSharedValue(0);
@@ -305,7 +307,6 @@ export function BaseInputOTP({
 
   const tap = Gesture.Tap()
     .enabled(!disabled)
-    .hitSlop(8)
     .onEnd((_event, success) => {
       if (success) scheduleOnRN(setFocusRequest, focusRequest + 1);
     });
@@ -337,7 +338,13 @@ export function BaseInputOTP({
           ) as object)
         }
         style={[
-          { width: totalWidth, minHeight: 44, justifyContent: 'center' },
+          {
+            width: Math.max(targetSize, totalWidth),
+            marginHorizontal: -horizontalExtra,
+            minHeight: targetSize,
+            marginVertical: Platform.OS === 'android' ? -2 : 0,
+            justifyContent: 'center',
+          },
           style,
           shakeStyle,
         ]}
@@ -371,7 +378,13 @@ export function BaseInputOTP({
               : null,
           ]}
         />
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignSelf: 'center',
+          }}
+        >
           {normalizedGroups.map((group, groupIndex) => {
             const start = normalizedGroups
               .slice(0, groupIndex)
@@ -425,8 +438,8 @@ export function BaseInputOTP({
           style={[
             {
               position: 'absolute',
-              left: 0,
-              top: 4,
+              left: horizontalExtra,
+              top: Platform.OS === 'android' ? 6 : 4,
               width: CELL,
               height: CELL,
               borderWidth: 1,

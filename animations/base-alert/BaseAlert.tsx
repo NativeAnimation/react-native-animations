@@ -125,7 +125,6 @@ export function BaseAlert({
   };
   const tap = Gesture.Tap()
     .enabled(!!onDismiss && !closing)
-    .hitSlop(Platform.OS === 'android' ? 2 : 0)
     .onBegin(() => {
       pressed.set(
         reduced
@@ -241,7 +240,6 @@ export function BaseAlert({
                 accessible
                 accessibilityRole="button"
                 accessibilityLabel={dismissLabel}
-                hitSlop={Platform.OS === 'android' ? 2 : 0}
 
                 {
                   /* RN Web forwards DOM events rather than native event objects. */
@@ -263,10 +261,12 @@ export function BaseAlert({
                 }
                 style={[
                   {
-                    width: 44,
-                    height: 44,
-                    marginTop: -8,
-                    marginRight: -12,
+                    width: Platform.OS === 'android' ? 48 : 44,
+                    height: Platform.OS === 'android' ? 48 : 44,
+                    marginTop: Platform.OS === 'android' ? -10 : -8,
+                    marginBottom: Platform.OS === 'android' ? -2 : 0,
+                    marginLeft: Platform.OS === 'android' ? -2 : 0,
+                    marginRight: Platform.OS === 'android' ? -14 : -12,
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: theme.radius.md,

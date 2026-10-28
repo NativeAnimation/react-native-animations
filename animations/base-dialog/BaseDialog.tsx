@@ -390,10 +390,10 @@ export function BaseDialog({
                     style={[
                       {
                         position: 'absolute',
-                        top: 2,
-                        right: 2,
-                        width: 44,
-                        height: 44,
+                        top: Platform.OS === 'android' ? 0 : 2,
+                        right: Platform.OS === 'android' ? 0 : 2,
+                        width: Platform.OS === 'android' ? 48 : 44,
+                        height: Platform.OS === 'android' ? 48 : 44,
                         alignItems: 'center',
                         justifyContent: 'center',
                         opacity: 0.7,

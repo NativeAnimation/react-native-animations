@@ -123,7 +123,17 @@ export function BaseSelect({
       if (success) scheduleOnRN(toggle);
     });
   return (
-    <View style={[{ gap: 8, opacity: disabled ? 0.5 : 1 }, style]}>
+    <View
+      style={[
+        {
+          gap: 8,
+          opacity: disabled ? 0.5 : 1,
+          paddingVertical: Platform.OS === 'android' ? 2 : 0,
+          marginVertical: Platform.OS === 'android' ? -2 : 0,
+        },
+        style,
+      ]}
+    >
       {label ? (
         <Text
           style={{
@@ -169,7 +179,14 @@ export function BaseSelect({
           }
           style={[
             NO_WEB_OUTLINE,
-            [{ minHeight: 44, paddingVertical: 4 }, pressStyle],
+            [
+              {
+                minHeight: Platform.OS === 'android' ? 48 : 44,
+                paddingVertical: Platform.OS === 'android' ? 6 : 4,
+                marginVertical: Platform.OS === 'android' ? -2 : 0,
+              },
+              pressStyle,
+            ],
           ]}
         >
           <View

@@ -43,8 +43,8 @@ brand.colors.primary = '#e11d48';
 <BaseThemeProvider theme={brand}>…</BaseThemeProvider>
 ```
 
-The fonts are Geist (`Geist_400Regular`, `Geist_500Medium`) loaded with `@expo-google-fonts/geist`; replace
-`theme.fonts` to use your own.
+The fonts are Geist (`Geist_400Regular`, `Geist_500Medium`) loaded from `@expo-google-fonts/geist/400Regular` and
+`@expo-google-fonts/geist/500Medium`. Replace `theme.fonts` to use your own.
 
 ## Props (`BaseThemeProvider`)
 
