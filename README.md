@@ -96,14 +96,37 @@ see the props of [Meal Scan Nutrition](https://nativeanimation.com/animations/me
 
 ## Install
 
-Each folder is self-contained. Two ways to add one:
+### Native Animation Base
+
+Base is free forever, MIT licensed, and needs no account. Install the shared theme and a component or screen block
+with the CLI:
 
 ```sh
-# With the CLI (free account; copies the source into src/components/<id>/)
+npx nativeanimation init --base
+npx nativeanimation add base-sign-in-block
+npx nativeanimation add base-settings-block base-list-detail-block
+```
+
+`init --base` sets up the Base theme in an Expo project. `add` copies Base source, its Base dependencies, and
+`base-theme` into your project. You can also download a component from its page or copy its folder from this
+repository. The five complete screen blocks are listed in the [Base section](#native-animation-base-mit-no-account).
+
+### Other catalog pieces
+
+For pieces outside Base, the CLI requires an account and access to each piece. Free pieces use the Native Animation
+License too:
+
+```sh
 npx nativeanimation login
 npx nativeanimation add shimmer-skeleton
+```
 
-# Or by hand: copy animations/<id>/ into your project and install its dependencies
+You can also copy a free non-Base folder from this repository without signing in; its Native Animation License
+still applies. Paid pieces require purchase and account access for delivery. Install the dependencies declared
+by each piece:
+
+```sh
+# After copying animations/<id>/ into your project
 npx expo install react-native-reanimated react-native-worklets expo-linear-gradient
 ```
 
@@ -111,8 +134,20 @@ Dependencies for each piece are listed in its `piece.json` and README.
 
 ## Use with your AI coding agent
 
-The Native Animation plugin bundles one shared skill and the MCP server. Your agent can search, compare dependencies,
-read real props, and add an animation to the requested Expo screen.
+Connect the MCP. Build the whole app. The Native Animation MCP server can install Base without an account.
+Connect it, then ask your agent to read the Base guide and build the screens for your app. Base is free forever under MIT; the same MCP connection can search and read
+the rest of the catalog without an account, while installing other pieces requires sign-in and access.
+
+```sh
+npx -y nativeanimation@latest mcp
+```
+
+Base MCP tools include `setup_base`, `list_family`, `list_blocks`, `add_block`, `add_piece`, and `get_piece`; the
+server also provides `nativeanimation://base/guide` and the `build-app-with-base` prompt. See the
+[Base agent guide](https://nativeanimation.com/base/docs/build-with-an-agent).
+
+The Native Animation plugin bundles one shared skill and the MCP server. For other catalog pieces, your agent can
+search, compare dependencies, read real props, and install pieces included with your signed-in account.
 
 **Claude Code** (2.1.275 or later), inside a session:
 
@@ -140,9 +175,10 @@ require review. [Package formats and current limitations](agent-kit/FORMATS.md) 
 For an MCP-only connection, [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=nativeanimation&config=eyJuYXRpdmVhbmltYXRpb24iOnsiY29tbWFuZCI6Im5weCIsImFyZ3MiOlsiLXkiLCJuYXRpdmVhbmltYXRpb25AbGF0ZXN0IiwibWNwIl19fQ%3D%3D);
 that link does not install the skill.
 
-Ask: *"Add a skeleton loader to the feed while it loads."* Public discovery needs no account. To add through MCP,
-run `npx nativeanimation login` yourself; your agent can also use the free source folders without a session.
-Paid pieces cost **$9 each or $299 once for All-access (launch price)**.
+Ask: *"Build a habit tracker with onboarding, a list and detail view, settings, and plans using Base."* No account
+is needed for Base through CLI, MCP, manual download, or this repository. To install other catalog pieces through
+CLI/MCP, run `npx nativeanimation login` yourself and make sure your account includes each piece. Paid pieces cost
+**$9 each or $299 once for All-access (launch price)**.
 
 ## Compatibility
 
@@ -160,6 +196,15 @@ one-time payment.
 
 ## License
 
-Free to use in unlimited personal and commercial apps under the
-[Native Animation License](https://nativeanimation.com/license). Please don't republish the source as a library,
-template or UI kit.
+### Native Animation Base
+
+Base folders, including `base-theme`, include the [MIT License](animations/base-theme/LICENSE). Base is free
+forever, needs no account, and may be used and redistributed under MIT terms.
+
+### Other catalog pieces
+
+Every piece outside Base, including free pieces, is covered by the
+[Native Animation License](https://nativeanimation.com/license). It allows use in unlimited personal and commercial
+apps, requires a license per developer working with the source, and does not allow republishing the source as a
+library or template. All-access includes the current and future catalog under that license; it does not change the
+MIT license for Base.
