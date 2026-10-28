@@ -90,3 +90,8 @@ Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13
 Targets fill the space halfway to each neighboring tab without overlapping; the icons and active pill keep their original size. On Android, reserve at least 48 dp per tab in the content area inside the horizontal padding. Targets keep that minimum by adjusting shared boundaries when needed, independently of the active label. A host narrower than the combined minimum keeps targets separate but cannot give every tab 48 dp.
 
 Tabs expose their selected state and include unread badge counts in their accessible names. Hidden navigation is removed from accessibility and pointer interaction. Web tabs support Enter/Space activation. Reduce Motion removes press scaling and makes label, pill, and visibility changes immediate.
+
+
+## Touch targets
+
+Targets are 48 dp tall on Android, 48 pt on iOS, and 48 px on web. Inside the horizontal padding, reserve at least 48 dp of width per tab on Android or 44 pt on iOS; reserve 48 px per tab on web. A narrower host cannot provide the minimum for every tab. Keep the full target inside the host and clear of neighboring controls.

@@ -64,4 +64,9 @@ Expo SDK 58 · React Native 0.88 · Reanimated 4.7 · react-native-worklets 0.13
 
 ## Accessibility
 
-A static card preserves the accessibility of its children. A pressable card is announced as a button and supports accessibility activation and Enter/Space on web. It has a minimum 44 pt target. Keep nested buttons and inputs in static cards. With Reduce Motion on, the pressure scale stays at 1.
+A static card preserves the accessibility of its children. A pressable card is announced as a button and supports accessibility activation and Enter/Space on web. It reserves at least 44 pt in each dimension; the host must provide 48 dp on Android. Keep nested buttons and inputs in static cards. With Reduce Motion on, the pressure scale stays at 1.
+
+
+## Touch targets
+
+Pressable cards reserve a 44×44 minimum on every platform. On Android, the host must give the card at least 48×48 dp. Keep at least 44×44 pt on iOS and 44 px on web. Do not shrink cards below those dimensions or overlap their targets with negative margins. Put nested buttons and inputs in static cards.

@@ -101,4 +101,9 @@ and in development builds. Part of **Native Animation Base**, a free family that
 
 ## Accessibility
 
-The field is named by its label or accessibilityLabel. Built-in controls expose Show password/Hide password and Clear search labels, support screen reader activation and Enter/Space, and include Android hit slop for a 48 dp target. Empty clear controls are hidden from accessibility. With Reduce Motion on, focus and glyph changes are immediate without scale or displacement. Free forever. MIT.
+The field is named by its label or accessibilityLabel. Built-in controls expose Show password/Hide password and Clear search labels, support screen reader activation and Enter/Space, and reserve a 48 dp target on Android. Empty clear controls are hidden from accessibility. With Reduce Motion on, focus and glyph changes are immediate without scale or displacement. Free forever. MIT.
+
+
+## Touch targets
+
+Native fields and built-in actions reserve targets at least 48 dp tall on Android and 44 pt tall on iOS. Built-in actions are also 48 dp wide on Android and 44 pt wide on iOS. On web, plain fields are 36 px tall; fields with built-in actions and those actions are 44 px tall. Keep native fields at least 48 dp wide on Android or 44 pt wide on iOS. Stacked field centers must leave at least 48 dp on Android or 44 pt on iOS, plus room for labels and messages. Do not overlap targets with negative margins.
